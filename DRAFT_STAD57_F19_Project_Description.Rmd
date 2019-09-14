@@ -1,0 +1,125 @@
+---
+title: "STAD57 F19 Project"
+output:
+  html_notebook: default
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+
+### Project Overview
+
+For the project you will work on one of two problems provided by clients from Statistics Canada, using open data on Canadian economic indicators. The project will be completed in groups of 3 to 4 students, and there will be 3 milestones: a proposal, a draft, and a final report. Each team will also have to give a short presentation of their work to the clients. 
+
+### Problem Descriptions 
+
+Each team must select one of the following problems to work on:
+
+#### 1. Estimating GDP Industry Price Deflators
+Price indexes for industry GDP estimates are derived from data tables that require considerable amounts of information from multiple sources, and are available with a lag. As a consequence, price indexes for GDP by industry are also only available with a lag. These GDP by industry price indexes can be derived from the real GDP and nominal GDP estimates in [Table 36-10-0217](https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=3610021701). A number of data sources for prices are, however, available in more recent periods. These include the Consumer Price Index (monthly: [Table 18-10-0004](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000401)  and annual: [Table 18-10-0005](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000501) ), the Raw Materials Price Index (monthly: [Table 18-10-0034](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810003401)), the Industrial Products Price Index (monthly: [Table 18-10-0030](https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=1810003001)), the Survey of Employment, Payroll and Hours (monthly: [Table 14-10-0206](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1410020601)), and the Labour Force Survey (monthly: [Table 14-10-0320](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1410032002), monthly: [Table 14-10-0063](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1410006301)) The goal is to examine different models that could be used to project a GDP price index for a particular industry up to the most recent data point (and possibly create a one or two step ahead forecasts?).
+ 
+The accuracy of the predictions can be examined using standard out-of-sample forecast evaluation metrics such as the RMSE.
+ 
+#### 2. Nowcasting GDP
+Nowcasting uses techniques for combining information available at different frequencies to predict a lower frequency value from partial information on the higher frequency data. For example, monthly data can be used to infer the value for a quarter or a year. The goal is to use monthly GDP ([Table 36-10-0434](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610043402)) (and possibly other monthly information ?) to predict quarterly GDP ([Table 36-10-0449](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610044901)). Typically the nowcast focuses on growth rates and requires making three nowcasts as the quarter unfolds. The first prediction is at the start of the quarter, when data for the three months is unknown, the second prediction is made after the first month of data is published, and the third prediction is made after the second month of data is published.  This produces the following pattern:
+
+1. Start of quarter prediction for Q2:
+
+|           | Jan | Feb | Mar | Apr | May | Jun     |
+|-----------|-----|-----|-----|-----|-----|---------|
+| monthly   | X1  | X2  | X3  | ?   | ?   | ?       |
+| quarterly |     |     | Q1  |     |     | (Pred)  |
+
+2. Prediction after first month of data
+
+|           | Jan | Feb | Mar | Apr | May | Jun     |
+|-----------|-----|-----|-----|-----|-----|---------|
+| monthly   | X1  | X2  | X3  | X4  | ?   | ?       |
+| quarterly |     |     | Q1  |     |     | (Pred)  |
+
+3. Prediction after second month of data
+
+|           | Jan | Feb | Mar | Apr | May | Jun     |
+|-----------|-----|-----|-----|-----|-----|---------|
+| monthly   | X1  | X2  | X3  | X4  | X5  | ?       |
+| quarterly |     |     | Q1  |     |     | (Pred)  |
+
+The accuracy of the nowcasts can be examined using standard out-of-sample forecast metrics such as the RMSE, and can be examined at each of the three steps.
+
+### Project Data 
+
+Data for both projects are available through Statistics Canada's [data portal](https://www150.statcan.gc.ca/n1//en/type/data?MM=1#tables). Time series can be extracted from data tables containing various economic indicators. Data tables are identified by numbers, and contain several series which can be referenced/extracted using [vector codes](https://mountainmath.github.io/cansim/articles/retrieving_cansim_vectors.html). You can download data in [csv files](https://www.statcan.gc.ca/eng/developers/csv/user-guide) or, more conveniently, load them directly onto R using the [cansim package](https://cran.r-project.org/web/packages/cansim/vignettes/cansim.html). 
+
+
+### Deliverables 
+
+You will have to submit three pieces of work: an initial proposal, a draft report, and a final report & presentation.
+
+* *Proposal*: The proposal must specify the problem you will work on and contain an initial exploration and preliminary analysis of the data. The purpose is to ensure that you have thought about the problem and tried some  basic approaches, but it is also an opportunity to get feedback. The proposal will be a short report (5 pages max) **due on Oct 4**, and will be worth 15% of the project.
+
+* *Draft Report*: The draft must include the core of your analysis. It will be structured as a technical report, with a summary, introduction, methods, results, and discussion sections. It should not exceed 10 pages, and you must sumbit the code used in your analysis. Again, the purpose is to make sure you are on track and have a chance to receive feedback. The draft is **due on Nov 8**, and will be worth 15% of the project.
+
+* *Final Report & presentation*: You will have to submit the final version of your report and deliver a 5 minute presentation of your work to our clients from Statistics Canada. Both are **due on Nov 28**, and will be worth 60% of the project.
+
+### Teamwork
+The project is to be completed in teams of 3-4 students. Team selection will be based on the results of an online survey on [CATME](https://www.catme.org/); if you do not fill in the survey you will be assigned to an arbitrary team. There will be another survey at the end where you student will evaluate your teammates, with the purposes of assessing the contribution of each team member to the project. The final project marks will be determined by the overall project marks, adjusted by an individual contribution factor.
+
+### References
+Below are some useful resources:
+
+* Extracting StatCan time series with the [cansim package](https://mountainmath.github.io/cansim/articles/retrieving_cansim_vectors.html).
+* [R for Data Science](https://r4ds.had.co.nz/) book for learning to use the [tidyverse](https://www.tidyverse.org/).
+* Description of [GDP calculation](http://www23.statcan.gc.ca/imdb/p2SV.pl?Function=getSurvey&SDDS=1301).
+* Bank of Canada article on [Nowcasting Canadian Economic Activity](https://www.bankofcanada.ca/wp-content/uploads/2018/08/sdp2018-9.pdf).
+
+
+***
+
+
+### Getting Started
+
+Below is some starter R code for downloading and plotting relevant time series:
+
+
+```{r, fig.height=3, fig.width=5}
+# load required packages
+library(cansim)
+library(tidyverse)
+library(lubridate)
+
+#### Problem 1 ####
+
+# table overview
+get_cansim_table_overview("36-100-217")
+
+# view entire annual GDP by industry table
+get_cansim(36100217)
+
+# plot Real GDP Retail trade & CPI - All items 
+get_cansim_vector( c( 
+  "Real GDP - Retail trade" = "v86718776",
+  "CPI - All items" = "v41693271" ) ,
+    start_time = "1960-01-01" ) %>% 
+  normalize_cansim_values() %>% 
+  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
+  geom_line() + geom_point() + ylab("INDEX LEVEL") + 
+  ggtitle("Problem 1: Plot of Retail industry Real GDP and CPI")
+
+
+#### Problem 2 ####
+
+# plot quarterly & monthly GDP 
+get_cansim_vector( c( 
+  "monthly GDP" = "v65201210",
+  "quarterly GDP" = "v1000000673") ,
+    start_time = "2015-01-01" ) %>% 
+  normalize_cansim_values() %>% 
+  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
+  geom_line() + geom_point() + ylab("Chained (2012) dollars") +
+  ggtitle("Problem 2: Plot of quarterly & monthly GDP")
+
+
+```
