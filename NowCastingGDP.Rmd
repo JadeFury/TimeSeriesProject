@@ -6,3 +6,38 @@ output: html_document
 ---
 
 
+```{r, fig.height=3, fig.width=5}
+# load required packages
+library(cansim)
+library(tidyverse)
+library(lubridate)
+
+
+
+
+#### Problem 2 ####
+
+# plot quarterly & monthly GDP 
+#This code is from the Draft
+get_cansim_vector( c( 
+  "monthly GDP" = "v65201210",
+  "quarterly GDP" = "v1000000673") ,
+    start_time = "2015-01-01" ) %>% 
+  normalize_cansim_values() %>% 
+  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
+  geom_line() + geom_point() + ylab("Chained (2012) dollars") +
+  ggtitle("Problem 2: Plot of quarterly & monthly GDP")
+
+
+```
+
+```{r}
+get_cansim_vector( c( 
+  "monthly GDP (basic prices)" = "v65201210",
+  "quarterly GDP (expend-based)" = "v62305723") ,
+    start_time = "2010-01-01" ) %>% 
+  normalize_cansim_values() %>% 
+  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
+  geom_line() + geom_point() + ylab("Chained (2012) dollars")
+```
+
