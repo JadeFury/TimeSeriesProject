@@ -11,7 +11,8 @@ output: html_document
 library(cansim)
 library(tidyverse)
 library(lubridate)
-
+library(modelr)
+library(broom)
 
 
 
@@ -40,4 +41,26 @@ get_cansim_vector( c(
   ggplot( aes( x = Date, y = VALUE, col = label ) ) +
   geom_line() + geom_point() + ylab("Chained (2012) dollars")
 ```
+
+```{r}
+get_cansim_vector( c( 
+  "monthly GDP (basic prices)" = "v65201210",
+  "quarterly GDP (expend-based)" = "v62305723") ,
+    start_time = "2009-01-01" ) %>% 
+    normalize_cansim_values() -> ncastDF
+```
+
+```{r}
+ncastDF %>% group_by(label) %>% summarise(time_mean = mean(VALUE), time_var = var(VALUE), time_med = median(VALUE))
+```
+
+```{r}
+cor(ncastDF$VALUE[ncastDF$label == "monthly GDP (basic prices)"],ncastDF$VALUE[ncastDF$label == "quarterly GDP (expend-based)"])
+```
+
+```{r}
+ncastDF %>% filter(label == "quarterly GDP (expend-based)") %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+```
+
+
 
