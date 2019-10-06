@@ -32,6 +32,7 @@ get_cansim_vector( c(
 
 ```
 
+In order to get a closer look at the existing pattern, we separated the monthly and quarterly GDP and then graphed them.
 ```{r}
 get_cansim_vector( c( 
   "monthly GDP (basic prices)" = "v65201210",
