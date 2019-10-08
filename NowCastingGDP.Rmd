@@ -63,5 +63,5 @@ cor(ncastDF$VALUE[ncastDF$label == "monthly GDP (basic prices)"],ncastDF$VALUE[n
 ncastDF %>% filter(label == "quarterly GDP (expend-based)") %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
 ```
 
-
+Now what we want to do is use a basic regression model to help us further our understanding of the data.
 
