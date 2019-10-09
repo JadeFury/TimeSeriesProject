@@ -4,7 +4,7 @@ author: "Minhaz Khan, Navin Chandradat, Bobak Ahmar, Vincent La"
 date: "14/09/2019"
 output: html_document
 ---
-
+The problem that we will be tackling is the prediction of the quarters of the fiscal year. To do this, we will employ a technique called NowCasting, which is the prediction of the current, and near future by examining data that occur at different frequencies and with different lags. To begin, we'll first plot the monthly and quarterly GDPs against eachother. Next, we will fit a model based on the data provided and examine the correlation between different months and quarters.
 
 ```{r, fig.height=3, fig.width=5}
 # load required packages
