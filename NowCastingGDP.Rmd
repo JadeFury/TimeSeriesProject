@@ -62,11 +62,22 @@ ncastDF %>% group_by(label) %>% summarise(time_mean = mean(VALUE), time_var = va
 ```
 
 ```{r}
+ncastDF %>% spread(label,VALUE) -> ncastSP
+ncastSP
+
+cor(ncastSP$`quarterly GDP (expend-based)`,ncastSP$`monthly GDP (basic prices)`)
+ncastSP %>% na.omit(`quarterly GDP (expend-based)`)
 cor(ncastDF$VALUE[ncastDF$label == "monthly GDP (basic prices)"],ncastDF$VALUE[ncastDF$label == "quarterly GDP (expend-based)"])
 ```
 
 ```{r}
-ncastDF %>% filter(label == "quarterly GDP (expend-based)") %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+glimpse(ncastDF)
+ncastDF %>% filter(label == "quarterly GDP (expend-based)" & year(Date) ==2010) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+
+ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2010) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2011) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2012) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
+ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2013) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
 ```
 
 Now what we want to do is use a basic regression model to help us further our understanding of the data.
@@ -74,7 +85,8 @@ Now what we want to do is use a basic regression model to help us further our un
 ```{r}
 #Trying to fit a linear model
 
-ncast.1 = lm(VALUE~label, data = ncastDF)
+
+ncast.1 = lm(VALUE~label+Date, data = ncastDF)
 summary(ncast.1)
 ```
 
