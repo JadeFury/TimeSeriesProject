@@ -71,3 +71,10 @@ ncastDF %>% filter(label == "quarterly GDP (expend-based)") %>% ggplot(aes(Date,
 
 Now what we want to do is use a basic regression model to help us further our understanding of the data.
 
+```{r}
+#Trying to fit a linear model
+
+ncast.1 = lm(VALUE~label, data = ncastDF)
+summary(ncast.1)
+```
+
