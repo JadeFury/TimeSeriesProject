@@ -88,5 +88,9 @@ Now what we want to do is use a basic regression model to help us further our un
 
 ncast.1 = lm(VALUE~label+Date, data = ncastDF)
 summary(ncast.1)
+ggplot(ncast.1,aes(x=Date,y= VALUE,group = Date))+geom_boxplot()
+```
+
+Here, we can see that the variance between the values are more or less the same time progresses, while the mean steadily increases in an almost linear fashion.
 ```
 
