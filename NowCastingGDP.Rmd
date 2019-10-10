@@ -16,7 +16,7 @@ library(tidyverse)
 library(lubridate)
 library(modelr)
 library(broom)
-
+library(astsa)
 
 
 #### Problem 2 ####
@@ -89,6 +89,11 @@ Now what we want to do is use a basic regression model to help us further our un
 ncast.1 = lm(VALUE~label+Date, data = ncastDF)
 summary(ncast.1)
 ggplot(ncast.1,aes(x=Date,y= VALUE,group = Date))+geom_boxplot()
+
+AIC(ncast.1) #regression ANOVA table
+aov(ncast.1) #Akaike’s criterion
+fitted <- fitted(ncast.1) #fitted values
+
 ```
 
 Here, we can see that the variance between the values are more or less the same time progresses, while the mean steadily increases in an almost linear fashion.
