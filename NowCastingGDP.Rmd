@@ -103,8 +103,8 @@ apps2 %>% mutate(Price = case_when(
                               Price > 0 ~ Price/Price,
                               TRUE ~ NA_real_)) -> apps2
 ```
-```{r}
 
-```
+*Plan of Attack*
+The essence of how we want to construct our model is that we want to create a three month cohort for each quarter. 
 
 
