@@ -64,10 +64,6 @@ ncastDF %>% group_by(label) %>% summarise(time_mean = mean(VALUE), time_var = va
 ```{r}
 ncastDF %>% spread(label,VALUE) -> ncastSP
 ncastSP
-
-cor(ncastSP$`quarterly GDP (expend-based)`,ncastSP$`monthly GDP (basic prices)`)
-ncastSP %>% na.omit(`quarterly GDP (expend-based)`)
-cor(ncastDF$VALUE[ncastDF$label == "monthly GDP (basic prices)"],ncastDF$VALUE[ncastDF$label == "quarterly GDP (expend-based)"])
 ```
 
 ```{r}
@@ -90,12 +86,15 @@ ncast.1 = lm(VALUE~label+Date, data = ncastDF)
 summary(ncast.1)
 ggplot(ncast.1,aes(x=Date,y= VALUE,group = Date))+geom_boxplot()
 
-AIC(ncast.1) #regression ANOVA table
-aov(ncast.1) #Akaike’s criterion
-fitted <- fitted(ncast.1) #fitted values
-
 ```
 
 Here, we can see that the variance between the values are more or less the same time progresses, while the mean steadily increases in an almost linear fashion.
+
+```{r}
+ncastSP %>% filter(year(Date) >= 2018 & year(Date) <= 2019) -> ncast1
 ```
+```{r}
+
+```
+
 
