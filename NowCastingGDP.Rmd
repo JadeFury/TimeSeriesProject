@@ -18,7 +18,6 @@ library(modelr)
 library(broom)
 library(astsa)
 
-
 #### Problem 2 ####
 
 # plot quarterly & monthly GDP 
@@ -92,6 +91,13 @@ Here, we can see that the variance between the values are more or less the same 
 
 ```{r}
 ncastSP %>% filter(year(Date) >= 2018 & year(Date) <= 2019) -> ncast1
+ncast1 %>% mutate(`monthly GDP (basic prices)` = case_when(
+                                  `monthly GDP (basic prices)` == NA ~ 0, TRUE ~ 0))
+
+apps2 %>% mutate(Price = case_when(
+                              Price == 0 ~ Price, 
+                              Price > 0 ~ Price/Price,
+                              TRUE ~ NA_real_)) -> apps2
 ```
 ```{r}
 
