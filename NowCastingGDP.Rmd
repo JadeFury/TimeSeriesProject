@@ -111,6 +111,16 @@ ncast1 %>% mutate(monthly = case_when(
 ```
 
 *Plan of Attack*
-The essence of how we want to construct our model is that we want to create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins for each month starting with one year and experimenting with that.
+Since the data we have is clearly dependent, i.e. the GDP for previous months would be dependent on eachother, we could use time series 
+methodologies to estimate the present and near future.
+
+In order to do this, we must construct a model of our time series. The essence of how we want to construct our model is that we want to 
+create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins 
+for each month starting with one year and experimenting with that. For example, if we were to predict the GDP for the first quarter of 
+2019, we would use the monthly GDP data from the previous 3 months. 
+
+Furthermore, in order to make full use of these methodologies, we’ll also check that our model is stationary. We may obtain evidence of 
+this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs.
+
 
 
