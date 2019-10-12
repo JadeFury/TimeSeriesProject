@@ -48,6 +48,7 @@ get_cansim_vector( c(
   geom_line() + geom_point() + ylab("Chained (2012) dollars")
 ```
 
+Retrieving the data frame:
 ```{r}
 get_cansim_vector( c( 
   "monthly GDP (basic prices)" = "v65201210",
@@ -56,15 +57,18 @@ get_cansim_vector( c(
     normalize_cansim_values() -> ncastDF
 ```
 
+Summary Statistics for monthly and quarterly data
 ```{r}
 ncastDF %>% group_by(label) %>% summarise(time_mean = mean(VALUE), time_var = var(VALUE), time_med = median(VALUE))
 ```
 
+Spreading the labels to their own columns for model testing
 ```{r}
 ncastDF %>% spread(label,VALUE) -> ncastSP
 ncastSP
 ```
 
+Checking out the yearly pattern for some quarters and months
 ```{r}
 glimpse(ncastDF)
 ncastDF %>% filter(label == "quarterly GDP (expend-based)" & year(Date) ==2010) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
@@ -75,20 +79,16 @@ ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2012) %>
 ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2013) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
 ```
 
-Now what we want to do is use a basic regression model to help us further our understanding of the data.
 
 ```{r}
-#Trying to fit a linear model
-
-
-ncast.1 = lm(VALUE~label+Date, data = ncastDF)
-summary(ncast.1)
 ggplot(ncast.1,aes(x=Date,y= VALUE,group = Date))+geom_boxplot()
 
 ```
 
 Here, we can see that the variance between the values are more or less the same time progresses, while the mean steadily increases in an almost linear fashion.
 
+
+Taking a sample year to work with:
 ```{r}
 ncastSP %>% filter(year(Date) >= 2018 & year(Date) <= 2019) -> ncast1
 
@@ -106,16 +106,22 @@ ncast1 %>% mutate(monthly = case_when(
 
 
 ```
+Replaced the NA with zeroes to work with models and other analysis.
 
+
+Sample model exploring the relationship between the quarterly and monthly values
 ```{r}
+cor(ncastMQ$quarterly,ncastMQ$monthly)
 ncast.lm = lm(quarterly~monthly+Date,data = ncastMQ)
 summary(ncast.lm)
 ```
+The model is off due to majority of the zeroes in our data
+
 
 ```{r}
 ncastMQ %>% spread(Date,monthly) 
 ```
-
+Ideal data frame to test the prediction of each quarter within a 3 month cohort.
 
 *Plan of Attack*
 Since the data we have is clearly dependent, i.e. the GDP for previous months would be dependent on eachother, we could use time series 
