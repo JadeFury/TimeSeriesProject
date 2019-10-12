@@ -120,9 +120,14 @@ for each month starting with one year and experimenting with that. For example, 
 2019, we would use the monthly GDP data from the previous 3 months. 
 
 Furthermore, in order to make full use of these methodologies, we’ll also check that our model is stationary. We may obtain evidence of 
-this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs, by using ACF and PACF plots. Additionally, we may check if the mean and variance functions are constant, or if γ(s,t) is function of h = s-t. If at least one of these are not fulfilled we may have to change our model such that it will. There also may be the problem of seasonality in the mean, for example the GDP of a country that relies heavily on tourist will fluctuate up and down throughout the year. In this case, we could employ the moving average smoother to get rid of seasonality.
+this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs, by using ACF 
+and PACF plots. Additionally, we may check if the mean and variance functions are constant, or if γ(s,t) is function of h = s-t. If at 
+least one of these are not fulfilled we may have to change our model such that it will. There also may be the problem of seasonality in 
+the mean, for example the GDP of a country that relies heavily on tourist will fluctuate up and down throughout the year. In this case, 
+we could employ the moving average smoother to get rid of seasonality.
 
-After this, we can use the ACF and PACF plots to determine the order of our ARMA model. To check if our model is good, we should look at the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
+After this, we can use the ACF and PACF plots to determine the order of our ARMA model. To check if our model is good, we should look at 
+the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
 
 
 
