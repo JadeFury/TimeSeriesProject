@@ -92,10 +92,6 @@ Here, we can see that the variance between the values are more or less the same 
 ```{r}
 ncastSP %>% filter(year(Date) >= 2018 & year(Date) <= 2019) -> ncast1
 
-ncast1 %>% mutate(monthly = case_when(
-                                  `monthly GDP (basic prices)` != NA ~ 0,
-                                  is.na(`monthly GDP (basic prices)`) ~ 0,
-                                  TRUE ~ NA_real_))
 
 ncast1 %>% mutate(monthly = case_when(
                                   `monthly GDP (basic prices)` == NA ~ 0, 
@@ -104,11 +100,22 @@ ncast1 %>% mutate(monthly = case_when(
   mutate(quarterly = case_when(
                                   `quarterly GDP (expend-based)` == NA ~ 0, 
                                   is.na(`quarterly GDP (expend-based)`) ~ 0,
-                                  TRUE ~ `quarterly GDP (expend-based)`))
+                                  TRUE ~ `quarterly GDP (expend-based)`)) %>% 
+  select(REF_DATE,releaseTime,Date,monthly,quarterly) -> ncastMQ
 
 
 
 ```
+
+```{r}
+ncast.lm = lm(quarterly~monthly+Date,data = ncastMQ)
+summary(ncast.lm)
+```
+
+```{r}
+ncastMQ %>% spread(Date,monthly) 
+```
+
 
 *Plan of Attack*
 The essence of how we want to construct our model is that we want to create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins for each month starting with one year and experimenting with that.
