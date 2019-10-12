@@ -105,6 +105,6 @@ apps2 %>% mutate(Price = case_when(
 ```
 
 *Plan of Attack*
-The essence of how we want to construct our model is that we want to create a three month cohort for each quarter. 
+The essence of how we want to construct our model is that we want to create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins for each month starting with one year and experimenting with that.  
 
 
