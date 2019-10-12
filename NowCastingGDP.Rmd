@@ -112,7 +112,7 @@ ncast1 %>% mutate(monthly = case_when(
 
 *Plan of Attack*
 Since the data we have is clearly dependent, i.e. the GDP for previous months would be dependent on eachother, we could use time series 
-methodologies to estimate the present and near future.
+methodologies to estimate the present and near future, in particular, we will attempt to fit an ARMA model for the data.
 
 In order to do this, we must construct a model of our time series. The essence of how we want to construct our model is that we want to 
 create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins 
@@ -120,7 +120,9 @@ for each month starting with one year and experimenting with that. For example, 
 2019, we would use the monthly GDP data from the previous 3 months. 
 
 Furthermore, in order to make full use of these methodologies, we’ll also check that our model is stationary. We may obtain evidence of 
-this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs.
+this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs, by using ACF and PACF plots. Additionally, we may check if the mean and variance functions are constant, or if γ(s,t) is function of h = s-t. If at least one of these are not fulfilled we may have to change our model such that it will. There also may be the problem of seasonality in the mean, for example the GDP of a country that relies heavily on tourist will fluctuate up and down throughout the year. In this case, we could employ the moving average smoother to get rid of seasonality.
+
+After this, we can use the ACF and PACF plots to determine the order of our ARMA model. To check if our model is good, we should look at the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
 
 
 
