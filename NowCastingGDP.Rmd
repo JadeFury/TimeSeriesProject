@@ -98,13 +98,9 @@ ncast.1 %>% mutate(monthly = case_when(
 ncast1 %>% mutate(monthly = case_when(
                                   `monthly GDP (basic prices)` == NA ~ 0, TRUE ~ `monthly GDP (basic prices)`))
 
-apps2 %>% mutate(Price = case_when(
-                              Price == 0 ~ Price, 
-                              Price > 0 ~ Price/Price,
-                              TRUE ~ NA_real_)) -> apps2
 ```
 
 *Plan of Attack*
-The essence of how we want to construct our model is that we want to create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins for each month starting with one year and experimenting with that.  
+The essence of how we want to construct our model is that we want to create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins for each month starting with one year and experimenting with that.
 
 
