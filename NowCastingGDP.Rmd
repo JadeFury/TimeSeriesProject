@@ -144,6 +144,20 @@ After this, we can use the ACF and PACF plots to determine the order of our ARMA
 the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
 
 ```{r}
+# Plot quarterly & monthly GDP 
+X2raw = get_cansim_vector( c( 
+  "monthly GDP (basic prices)" = "v65201210" ,
+  "quarterly GDP (market prices)" = "v62305752" ) ,
+    start_time = "1900-01-01" ) %>% 
+  normalize_cansim_values() 
+# (note correct vector code "v62305752" for quarterly GDP)
+X2raw %>% filter( Date >= "2010-01-01") %>% 
+  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
+  geom_line() + geom_point() + ylab("Chained (2012) dollars")
+```
+
+
+```{r}
 # (note (basic prices) = (market prices) - (tax & subsidies), 
 #  and that is why monthly data values are lower)
 
