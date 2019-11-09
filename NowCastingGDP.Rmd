@@ -17,7 +17,7 @@ library(lubridate)
 library(modelr)
 library(broom)
 library(astsa)
-library(xts)
+library(xts) # better ts objects, including quarterly series
 
 #### Problem 2 ####
 
@@ -143,5 +143,64 @@ we could employ the moving average smoother to get rid of seasonality.
 After this, we can use the ACF and PACF plots to determine the order of our ARMA model. To check if our model is good, we should look at 
 the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
 
+```{r}
+# (note (basic prices) = (market prices) - (tax & subsidies), 
+#  and that is why monthly data values are lower)
 
+# Quartely data 
+Q = X2raw %>%  
+  filter( VECTOR == "v62305752" ) %>% 
+  # find year & quarter
+  mutate( Y = year( Date ), Q = quarter( Date ),
+          index = yearqtr( Y + Q/4 ) ) %>%  
+  xts( x=.$VALUE, order.by =.$index) 
+# plot(Q)
+# Monthly data 
+M = X2raw %>%  
+  filter( VECTOR == "v65201210" ) %>% 
+  # find year, quarter, month, and month-in-quarter
+  mutate( Y = year( Date ), Q = quarter( Date ), 
+          index = yearqtr( Y + Q/4 ), 
+          M = month( Date ),
+          MinQ = paste( "M", M%%3, sep="" ) ) %>%  
+  # spread monthly data into 3 columns one for each month-in-quarter
+  pivot_wider(id_cols = index, names_from = MinQ, 
+              values_from = VALUE ) %>% 
+  # take lag for M0
+  mutate( M0 = lag(M0) ) %>% 
+  xts( x=.[,c("M0","M1","M2")], order.by =.$index) 
+#plot(M$M0); plot(M)
+# combine & align quarterly series with expanded monthly data
+X2 = merge(Q, M, join = "inner" )
+plot(X2)
+```
+
+```{r}
+# ACF of differenced GDP seems 
+acf( diff(X2$Q), na.action = na.pass )
+```
+
+```{r}
+pacf( diff(X2$Q), na.action = na.pass )
+```
+
+```{r}
+# model w/ past information only 
+arima( x = X2$Q, order=c(1,1,0) )
+```
+
+```{r}
+# model w/ past information + M0 (start of quarter forecast)
+arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
+```
+
+```{r}
+# model w/ past information + M0 + M1 (1st month nowcast)
+arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
+```
+
+```{r}
+# model w/ past information + M0 + M1 + M2 (2nd month nowcast)
+arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
+```
 
