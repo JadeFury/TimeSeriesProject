@@ -17,6 +17,7 @@ library(lubridate)
 library(modelr)
 library(broom)
 library(astsa)
+library(forecast)
 library(xts) # better ts objects, including quarterly series
 
 #### Problem 2 ####
