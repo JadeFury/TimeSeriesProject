@@ -17,6 +17,7 @@ library(lubridate)
 library(modelr)
 library(broom)
 library(astsa)
+library(xts)
 
 #### Problem 2 ####
 
