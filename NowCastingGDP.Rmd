@@ -224,3 +224,10 @@ arlm = lm(Q~M0+M1+M2,data = X2)
 summary(arlm)
 ```
 
+```{r}
+library(aTSA)
+test_model = arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
+plot(test_model$residuals)
+adf.test(X2$Q, nlag=NULL, output = TRUE)
+adf.test(test_model$residuals, nlag = NULL, output = TRUE)
+```
