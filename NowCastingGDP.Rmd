@@ -222,6 +222,7 @@ arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
 ```{r}
 arlm = lm(Q~M0+M1+M2,data = X2)
 summary(arlm)
+predict(arlm, n.ahead=12)
 ```
 
 ```{r}
