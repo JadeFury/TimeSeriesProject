@@ -190,6 +190,13 @@ X2 = merge(Q, M, join = "inner" )
 plot(X2)
 ```
 
+Now to try some log differencing:
+```{r}
+plot(diff(log(X2)))
+```
+
+
+
 ```{r}
 # ACF of differenced GDP seems 
 acf( diff(X2$Q), na.action = na.pass )
