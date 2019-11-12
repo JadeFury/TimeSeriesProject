@@ -244,7 +244,28 @@ auto.arima(X2$Q)
 
 For the models we tried:
 ```{r}
+AIC(model.1)
+BIC(model.1)
+```
 
+```{r}
+AIC(model.2)
+BIC(model.2)
+```
+
+```{r}
+AIC(model.3)
+BIC(model.3)
+```
+
+```{r}
+AIC(model.4)
+BIC(model.4)
+```
+
+```{r}
+AIC(arlm)
+BIC(arlm)
 ```
 
 
