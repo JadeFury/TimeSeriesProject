@@ -232,3 +232,10 @@ plot(test_model$residuals)
 adf.test(X2$Q, nlag=NULL, output = TRUE)
 adf.test(test_model$residuals, nlag = NULL, output = TRUE)
 ```
+
+Now to try and compare some models:
+```{r}
+auto.arima(X2$Q)
+```
+
+
