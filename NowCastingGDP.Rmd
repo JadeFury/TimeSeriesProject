@@ -201,22 +201,26 @@ pacf( diff(X2$Q), na.action = na.pass )
 
 ```{r}
 # model w/ past information only 
-arima( x = X2$Q, order=c(1,1,0) )
+model.1 <- arima( x = X2$Q, order=c(1,1,0) )
+model.1
 ```
 
 ```{r}
 # model w/ past information + M0 (start of quarter forecast)
-arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
+model.2 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
+model.2
 ```
 
 ```{r}
 # model w/ past information + M0 + M1 (1st month nowcast)
-arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
+model.3 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
+model.3
 ```
 
 ```{r}
 # model w/ past information + M0 + M1 + M2 (2nd month nowcast)
-arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
+model.4 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
+model.4
 ```
 
 ```{r}
@@ -236,6 +240,11 @@ adf.test(test_model$residuals, nlag = NULL, output = TRUE)
 Now to try and compare some models:
 ```{r}
 auto.arima(X2$Q)
+```
+
+For the models we tried:
+```{r}
+
 ```
 
 
