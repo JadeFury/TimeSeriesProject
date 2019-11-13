@@ -224,32 +224,9 @@ auto.arima(X2.l.d$Q)
 
 
 ```{r}
-# model w/ past information only 
-model.1 <- arima( x = X2$Q, order=c(1,1,0) )
-model.1
-```
-
-```{r}
-# model w/ past information + M0 (start of quarter forecast)
-model.2 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
-model.2
-```
-
-```{r}
-# model w/ past information + M0 + M1 (1st month nowcast)
-model.3 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
-model.3
-```
-
-```{r}
-# model w/ past information + M0 + M1 + M2 (2nd month nowcast)
-model.4 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
-model.4
-```
-
-```{r}
 arlm = lm(Q~M0+M1+M2,data = X2)
 summary(arlm)
+plot(arlm)
 predict(arlm, n.ahead=12)
 ```
 
