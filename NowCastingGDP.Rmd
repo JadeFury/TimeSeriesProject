@@ -192,7 +192,8 @@ plot(X2)
 
 Now to try some log differencing:
 ```{r}
-plot(diff(log(X2)))
+X2.l.d <- diff(log(X2))
+plot(X2.l.d)
 ```
 
 
