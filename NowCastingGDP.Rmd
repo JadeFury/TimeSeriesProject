@@ -199,8 +199,10 @@ plot(X2.l.d)
 
 
 ```{r}
-# ACF of differenced GDP seems 
+# ACF of differenced GDP seems
+par(mfrow=c(1,2))
 acf( diff(X2$Q), na.action = na.pass )
+acf( X2.l.d$Q, na.action = na.pass )
 ```
 
 ```{r}
