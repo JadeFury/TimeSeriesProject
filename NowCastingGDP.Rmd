@@ -242,9 +242,12 @@ predict(arlm, n.ahead=12)
 library(aTSA)
 test_model = arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
 plot(test_model$residuals)
-adf.test(X2$Q, nlag=NULL, output = TRUE)
-adf.test(test_model$residuals, nlag = NULL, output = TRUE)
+adf.test(X2.l.d$Q, nlag=NULL, output = TRUE)
+adf.test(X2.l.d$M0, nlag=NULL, output = TRUE)
+adf.test(X2.l.d$M1, nlag=NULL, output = TRUE)
+adf.test(X2.l.d$M2, nlag=NULL, output = TRUE)
 ```
+Note: For some reason cannot reject ADF null
 
 Now to try and compare some models:
 ```{r}
