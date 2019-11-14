@@ -222,6 +222,13 @@ Compare
 auto.arima(X2.l.d$Q)
 ```
 
+Retrieve residuals from ARMA models
+```{r}
+Resid.1 <- model.1$residuals
+Resid.2 <- model.2$residuals
+Resid.3 <- model.3$residuals
+Resid.4 <- model.4$residuals
+```
 
 ```{r}
 arlm = lm(Q~M0+M1+M2,data = X2)
