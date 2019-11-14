@@ -206,10 +206,10 @@ acf( X2.l.d$Q, na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
 Arima models w/past information only -> 
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
 ```{r}
-model.1 <- arima( x = X2.l.d$Q, order=c(1,1,0) )
-model.2 <- arima( x = X2.l.d$Q, order=c(1,1,0),  xreg = X2.l.d$M0)
-model.3 <- arima( x = X2.l.d$Q, order=c(1,1,0),  xreg = X2.l.d[,c("M0","M1")])
-model.4 <- arima( x = X2.l.d$Q, order=c(1,1,0),  xreg = X2.l.d[,c("M0","M1","M2")])
+model.1 <- arima( x = X2$Q, order=c(1,1,0) )
+model.2 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
+model.3 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
+model.4 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
 model.1 ; model.2 ; model.3 ; model.4
 ```
 
