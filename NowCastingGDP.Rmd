@@ -199,8 +199,8 @@ plot(X2.l.d)
 
 ```{r}
 # ACF PACF of differenced GDP seems
-acf( diff(X2$Q), na.action = na.pass ) 
-acf( X2.l.d$Q, na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
+acf( X2$Q, na.action = na.pass ) 
+acf( X2$Q, na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
 ```
 
 Arima models w/past information only -> 
