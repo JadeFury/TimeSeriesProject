@@ -269,6 +269,6 @@ wages <- read_csv("Wages, salaries and employers' social contributions (x 1,000)
 # To get just the data that is seasonally adjusted
 wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted")
 
-wages
+wages %>% filter(Sector == c("Compensation of employees", "Wages and salaries"))
 ```
 
