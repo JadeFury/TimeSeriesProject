@@ -307,3 +307,18 @@ M = X2raw %>%
   xts( x=.[,c("M0","M1","M2")], order.by =.$index)
 ```
 
+```{r}
+#Attempting to make Wages a TS
+wages %>% filter(GEO == "Canada") %>% 
+  filter(Sector == "Wages and salaries") %>% 
+  select(VALUE) -> CanWS
+CanWS
+ts(CanWS, start = c(1997,01), end = c(2019,6), frequency = 12) -> CanWS_ts
+
+plot(CanWS_ts)
+
+#difference to make stationary 
+CanWS_ts_log_diff <- diff(log(CanWS_ts))
+plot(CanWS_ts_log_diff)
+```
+
