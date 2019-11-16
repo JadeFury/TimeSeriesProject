@@ -260,3 +260,7 @@ BIC(arlm)
 ```
 
 
+```{r}
+LFS_2018 <- read_csv("LFS_Toronto 2018.csv")
+```
+
