@@ -283,29 +283,38 @@ wages
 ```
 
 ```{r}
-## Now to turn wages/LFS into a TS
+## Now to turn LFS into a TS
 
-Q.1 = wages %>%  
-  # find year & quarter
-  mutate( Y = year( Date ), Q = quarter( Date ),
-          index = yearqtr( Y + Q/4 ) ) %>%  
-  xts( x=.$VALUE, order.by =.$index) 
-# plot(Q)
-# Monthly data 
-M = X2raw %>%  
-  filter( VECTOR == "v65201210" ) %>% 
-  # find year, quarter, month, and month-in-quarter
-  mutate( Y = year( Date ), Q = quarter( Date ), 
-          index = yearqtr( Y + Q/4 ), 
-          M = month( Date ),
-          MinQ = paste( "M", M%%3, sep="" ) ) %>%  
-  # spread monthly data into 3 columns one for each month-in-quarter
-  pivot_wider(id_cols = index, names_from = MinQ, 
-              values_from = VALUE ) %>% 
-  # take lag for M0
-  mutate( M0 = lag(M0) ) %>% 
-  xts( x=.[,c("M0","M1","M2")], order.by =.$index)
+# Q.1 = LFS_2018 %>%  
+#   # find year & quarter
+#   mutate( Y = year( survdate ), Q = quarter( survdate ),
+#           index = yearqtr( Y + Q/4 ) ) %>%  
+#   xts( x=.$lfsstat, order.by =.$index) 
+# # plot(Q)
+# # Monthly data 
+# M.1 = LFS_2018 %>% 
+#   # find year, quarter, month, and month-in-quarter
+#   mutate( Y = year( survdate ), Q = quarter( survdate ), 
+#           index = yearqtr( Y + Q/4 ), 
+#           M = month( survdate ),
+#           MinQ = paste( "M", M%%13, sep="" ) ) %>%  
+#   # spread monthly data into 12 columns one for each month-in-quarter
+#   pivot_wider(id_cols = index, names_from = MinQ, 
+#               values_from = lfsstat ) %>% 
+#   xts( x=.[,c("M0","M1","M2","M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11")], order.by =.$index)
+# 
+# LFS2 = merge(Q.1, M.1, join = "inner" )
 ```
+
+```{r}
+#Attempt at making LFS_2018 a TS
+LFS_2018 %>% select(lfsstat) -> lfs_st
+
+ts(lfs_st, start = c(2018, 01), frequency = 12) -> lfs_st_ts
+
+plot(lfs_st_ts)
+```
+
 
 ```{r}
 #Attempting to make Wages a TS
