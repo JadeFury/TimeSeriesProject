@@ -276,6 +276,9 @@ LFS_2018 %>% mutate(survdate = ymd(survdate))
 # To get just the data that is seasonally adjusted
 wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted") %>% filter(GEO != "Outside Canada")
 
+wages <- wages %>% mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
+  mutate(REF_DATE = ymd(REF_DATE))
+
 wages
 ```
 
