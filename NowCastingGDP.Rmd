@@ -262,11 +262,13 @@ BIC(arlm)
 
 ```{r}
 LFS_2018 <- read_csv("LFS_Toronto 2018.csv")
+wages <- read_csv("Wages, salaries and employers' social contributions (x 1,000).csv")
 ```
 
 ```{r}
-X2
+# To get just the data that is seasonally adjusted
+wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted")
 
-ncastDF
+wages
 ```
 
