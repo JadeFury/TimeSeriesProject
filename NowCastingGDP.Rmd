@@ -205,6 +205,8 @@ acf( X2$Q, na.action = na.pass )
 acf( X2$Q, na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
 ```
 
+Standard ARMA model
+
 Arima models w/past information only -> 
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
 ```{r}
