@@ -188,6 +188,9 @@ M = X2raw %>%
 # combine & align quarterly series with expanded monthly data
 X2 = merge(Q, M, join = "inner" )
 plot(X2)
+
+X2decom = decompose(X2)
+
 ```
 
 Now to try some log differencing:
