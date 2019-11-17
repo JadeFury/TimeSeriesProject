@@ -254,21 +254,24 @@ adf.test(as.ts(Qdiff)) #Test not working
 acf(Qdiff, na.action = na.pass, main='ACF for Differenced Series')
 pacf(Qdiff, na.action = na.pass, main='PACF for Differenced Series') 
 ```
-We test with AR 1 or 2 and MA 1 for arima model
+Data is stationary now, we test with AR 1 or 2 and MA 1 for arima model
 
 Standard ARMA model
-```{r}
-ARMAacf()
-```
 
 
 Arima models w/past information only -> 
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
 ```{r}
-model.1 <- arima( x = X2$Q, order=c(1,1,0) )
-model.2 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2$M0)
-model.3 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1")])
-model.4 <- arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
+(auto.model <- auto.arima(Qdiff, seasonal = FALSE))
+tsdisplay(residuals(auto.model), lag.max=45, main='(1,1,1) Model Residuals') 
+model.1 <- arima( x = Qdiff, order=c(1,1,1))
+tsdisplay(residuals(model.1), lag.max=45, main='(1,1,1) Model Residuals')
+model.2 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2$M0), differences = 1))
+tsdisplay(residuals(model.2), lag.max=45, main='(1,1,1) Model Residuals')
+model.3 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1")]), differences = 1))
+tsdisplay(residuals(model.3), lag.max=45, main='(1,1,1) Model Residuals')
+model.4 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1","M2")]), differences = 1))
+tsdisplay(residuals(model.4), lag.max=45, main='(1,1,1) Model Residuals')
 model.1 ; model.2 ; model.3 ; model.4
 ```
 
@@ -278,7 +281,6 @@ AICS <- c(AIC(model.1),AIC(model.2),AIC(model.3),AIC(model.4))
 BICS <- c(BIC(model.1),BIC(model.2),BIC(model.3),BIC(model.4))
 Compare <- cbind(AICS,BICS)
 Compare
-auto.arima(X2.l.d$Q)
 ```
 
 Retrieve residuals from ARMA models
