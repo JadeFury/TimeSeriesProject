@@ -378,14 +378,14 @@ plot(lfs_st_ts)
 
 
 ```{r}
-#Attempting to make Wages a TS
+#Attempting to make Wages and salaries a TS
 wages %>% filter(GEO == "Canada") %>% 
   filter(Sector == "Wages and salaries") %>% 
   select(VALUE) -> CanWS
 CanWS
 
 
-ts(CanWS, start = c(1997,04), end = c(2019,6), frequency = 12) -> CanWS_ts_Monthly
+ts(CanWS, start = c(1997,01), end = c(2019,6), frequency = 12) -> CanWS_ts_Monthly
 
 #Make monthly to Quarterly
 CanWS_ts_quarterly <- aggregate(CanWS_ts_Monthly, nfrequency = 4)
@@ -404,6 +404,64 @@ CanWS_ts_log_diff_M <- diff(log(CanWS_ts_Monthly))
 plot(CanWS_ts_log_diff_q)
 plot(CanWS_ts_log_diff_M)
 ```
+```{r}
+#Compensation of employees	Time series
+#Attempting to make Wages and salaries a TS
+wages %>% filter(GEO == "Canada") %>% 
+  filter(Sector == "Compensation of employees") %>% 
+  select(VALUE) -> Compensation
+Compensation
+
+
+ts(Compensation, start = c(1997,01), end = c(2019,6), frequency = 12) -> Compensation_M
+
+#Make monthly to Quarterly
+Compensation_Q <- aggregate(Compensation_M, nfrequency = 4)
+Compensation_Q
+
+#plot the ts 
+plot(Compensation_M)
+plot(Compensation_Q)
+plot(decompose(Compensation_M))
+plot(decompose(Compensation_Q))
+
+#difference to make stationary 
+Comp_l_q <- diff(log(Compensation_Q))
+Comp_l_M <- diff(log(Compensation_M))
+
+plot(Comp_l_q)
+plot(Comp_l_M)
+```
+
+```{r}
+#All services-producing industries Time series
+wages %>% filter(GEO == "Canada") %>% 
+  filter(Sector == "All services-producing industries") %>% 
+  select(VALUE) -> services_prod
+services_prod
+
+
+ts(services_prod, start = c(1997,01), end = c(2019,6), frequency = 12) -> services_prod_M
+
+#Make monthly to Quarterly
+services_prod_Q <- aggregate(services_prod_M, nfrequency = 4)
+services_prod_Q
+
+#plot the ts 
+plot(services_prod_Q)
+plot(services_prod_M)
+plot(decompose(services_prod_M))
+plot(decompose(services_prod_Q))
+
+#difference to make stationary 
+services_l_q <- diff(log(services_prod_M))
+services_l_M <- diff(log(services_prod_Q))
+
+plot(services_l_q)
+plot(services_l_M)
+```
+
+
 
 ```{r}
 #Trying to fit a model on X2$Q with wages as external data
