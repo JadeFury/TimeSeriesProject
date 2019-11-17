@@ -249,7 +249,7 @@ acf( diff(X2$Q), na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
 ```{r}
 Qdiff = diff(log(X2$Q), differences = 1)
 plot(Qdiff)
-adf.test(Qdiff) #Test not working
+adf.test(as.ts(Qdiff)) #Test not working
 
 acf(Qdiff, na.action = na.pass, main='ACF for Differenced Series')
 pacf(Qdiff, na.action = na.pass, main='PACF for Differenced Series') 
