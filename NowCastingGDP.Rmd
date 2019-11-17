@@ -367,6 +367,8 @@ LFS_2018
 # LFS2 = merge(Q.1, M.1, join = "inner" )
 ```
 
+
+Analyzing External Data
 ```{r}
 #Attempt at making LFS_2018 a TS
 LFS_2018 %>% select(lfsstat) -> lfs_st
