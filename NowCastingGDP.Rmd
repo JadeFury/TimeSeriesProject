@@ -401,7 +401,7 @@ plot(decompose(CanWS_ts_quarterly))
 CanWS_ts_log_diff_q <- diff(log(CanWS_ts_quarterly))
 CanWS_ts_log_diff_M <- diff(log(CanWS_ts_Monthly))
 
-plot(CanWS_ts_log_diff)
+plot(CanWS_ts_log_diff_q)
 plot(CanWS_ts_log_diff_M)
 ```
 
