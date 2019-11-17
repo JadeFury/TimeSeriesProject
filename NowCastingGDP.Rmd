@@ -470,6 +470,6 @@ model.wages
 ```
 
 ```{r}
-QdiffTest = cbind(X2$M0,X2$M1,X2$M2)
-predict(model.4, newxreg=QdiffTest)
+QdiffTest2 = cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted,predict(X2$M2)$fitted)
+predict(model.4, newxreg=QdiffTest2)
 ```
