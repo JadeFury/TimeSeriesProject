@@ -468,3 +468,9 @@ plot(services_l_M)
 model.wages <- arima( x = X2$Q, order=c(1,1,0),  xreg = CanWS_ts_quarterly)
 model.wages
 ```
+
+```{r}
+QdiffTest = cbind(X2$M0,X2$M1,X2$M2)
+test_model2 = auto.arima(Qdiff, xreg=diff(log(QdiffTest)))
+forecast::forecast(test_model2, lead=1, id = NULL, alpha = 0.05, output= TRUE)
+```
