@@ -270,7 +270,7 @@ model.2 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2$M0), difference
 tsdisplay(residuals(model.2), lag.max=45, main='(1,1,1) Model Residuals')
 model.3 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1")]), differences = 1))
 tsdisplay(residuals(model.3), lag.max=45, main='(1,1,1) Model Residuals')
-model.4 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1","M2")]), differences = 1))
+model.4 <- Arima( y = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1","M2")]), differences = 1))
 tsdisplay(residuals(model.4), lag.max=45, main='(1,1,1) Model Residuals')
 model.1 ; model.2 ; model.3 ; model.4
 ```
@@ -472,5 +472,7 @@ model.wages
 ```{r}
 QdiffTest = cbind(X2$M0,X2$M1,X2$M2)
 test_model2 = auto.arima(Qdiff, xreg=diff(log(QdiffTest)))
-forecast::forecast(test_model2, lead=1, id = NULL, alpha = 0.05, output= TRUE)
+forecast(test_model2, lead=1, id = NULL, alpha = 0.05, output= TRUE)
+
+
 ```
