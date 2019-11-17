@@ -283,41 +283,28 @@ Compare <- cbind(AICS,BICS)
 Compare
 ```
 
-Retrieve residuals from ARMA models
-```{r}
-Resid.1 <- model.1$residuals
-Resid.2 <- model.2$residuals
-Resid.3 <- model.3$residuals
-Resid.4 <- model.4$residuals
-```
 
 ```{r}
 arlm = lm(Q~M0+M1+M2,data = X2)
 summary(arlm)
 plot(arlm)
-predict(arlm, n.ahead=12)
+
+arlm2 = lm(Q~M1+M2,data = X2)
+summary(arlm2)
+plot(arlm2)
 ```
+The previous month's data isn't significant so we generate a new model with the previous second and third month's data:
 
 ```{r}
-library(aTSA)
-test_model = arima( x = X2$Q, order=c(1,1,0),  xreg = X2[,c("M0","M1","M2")])
-plot(test_model$residuals)
-adf.test(X2$Q, nlag=NULL, output = TRUE)
-adf.test(X2$M0, nlag=12, output = TRUE)
-adf.test(X2$M1, nlag=12, output = TRUE)
-adf.test(X2$M2, nlag=12, output = TRUE)
-```
+model.5 <- Arima( y = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M1","M2")]), differences = 1))
+tsdisplay(residuals(model.5), lag.max=45, main='(1,1,1) Model Residuals')
 
-Now to try and compare some models:
-```{r}
-auto.arima(X2$Q)
+AIC(model.5)
 ```
+The AIC for this model is lower than model.4 containing the previous month, we will go forward improving this model for predictions
 
-```{r}
-AIC(arlm)
-BIC(arlm)
-```
 
+Analyzing External Data
 
 ```{r}
 LFS_2018 <- read_csv("LFS_Toronto 2018.csv")
@@ -334,38 +321,6 @@ wages <- wages %>% mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>%
 wages
 ```
 
-```{r}
-LFS_2018 <- LFS_2018 %>% unite(survdate, survyear, survmnth, sep = "-") %>% mutate(survdate = paste(survdate, "1", sep = "-"))
-
-LFS_2018 <- LFS_2018 %>% mutate(survdate = ymd(survdate))
-
-LFS_2018
-```
-
-
-```{r}
-## Now to turn LFS into a TS
-
-# Q.1 = LFS_2018 %>%  
-#   # find year & quarter
-#   mutate( Y = year( survdate ), Q = quarter( survdate ),
-#           index = yearqtr( Y + Q/4 ) ) %>%  
-#   xts( x=.$lfsstat, order.by =.$index) 
-# # plot(Q)
-# # Monthly data 
-# M.1 = LFS_2018 %>% 
-#   # find year, quarter, month, and month-in-quarter
-#   mutate( Y = year( survdate ), Q = quarter( survdate ), 
-#           index = yearqtr( Y + Q/4 ), 
-#           M = month( survdate ),
-#           MinQ = paste( "M", M%%13, sep="" ) ) %>%  
-#   # spread monthly data into 12 columns one for each month-in-quarter
-#   pivot_wider(id_cols = index, names_from = MinQ, 
-#               values_from = lfsstat ) %>% 
-#   xts( x=.[,c("M0","M1","M2","M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11")], order.by =.$index)
-# 
-# LFS2 = merge(Q.1, M.1, join = "inner" )
-```
 
 
 Analyzing External Data
