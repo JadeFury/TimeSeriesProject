@@ -233,18 +233,6 @@ adf.test(as.ts(X2$Q)) #Alternative stationary not working
 ```
 Not Stationary, have to implement differencing
 
-Now to try some log differencing:
-```{r}
-X2.l.d <- diff(log(X2))
-plot(X2.l.d)
-```
-
-
-```{r}
-# ACF PACF of differenced GDP seems
-acf( X2$Q, na.action = na.pass ) 
-acf( diff(X2$Q), na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
-```
 
 ```{r}
 Qdiff = diff(log(X2$Q), differences = 1)
