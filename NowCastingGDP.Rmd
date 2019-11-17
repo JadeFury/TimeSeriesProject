@@ -324,20 +324,6 @@ wages <- read_csv("Wages, salaries and employers' social contributions (x 1,000)
 
 ```{r}
 # To get just the data that is seasonally adjusted
-wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted") %>% filter(GEO=="Canada") %>% filter(Sector == "Wages and salaries")
-
-wages
-```
-
-```{r}
-LFS_2018 <- LFS_2018 %>% unite(survdate, survyear, survmnth, sep = "-") %>% mutate(survdate = paste(survdate, "1", sep = "-"))
-
-LFS_2018 %>% mutate(survdate = ymd(survdate))
-```
-
-
-```{r}
-# To get just the data that is seasonally adjusted
 wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted") %>% filter(GEO != "Outside Canada")
 
 wages <- wages %>% mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
@@ -345,6 +331,15 @@ wages <- wages %>% mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>%
 
 wages
 ```
+
+```{r}
+LFS_2018 <- LFS_2018 %>% unite(survdate, survyear, survmnth, sep = "-") %>% mutate(survdate = paste(survdate, "1", sep = "-"))
+
+LFS_2018 <- LFS_2018 %>% mutate(survdate = ymd(survdate))
+
+LFS_2018
+```
+
 
 ```{r}
 ## Now to turn LFS into a TS
