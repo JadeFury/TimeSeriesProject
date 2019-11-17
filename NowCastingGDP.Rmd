@@ -323,9 +323,68 @@ wages <- read_csv("Wages, salaries and employers' social contributions (x 1,000)
 ```
 
 ```{r}
+LFS_2018 <- LFS_2018 %>% unite(survdate, survyear, survmnth, sep = "-") %>% mutate(survdate = paste(survdate, "1", sep = "-"))
+
+LFS_2018 %>% mutate(survdate = ymd(survdate))
+```
+
+
+```{r}
 # To get just the data that is seasonally adjusted
-wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted") %>% filter(GEO=="Canada") %>% filter(Sector == "Wages and salaries")
+wages <- wages %>% filter(`Seasonal adjustment` == "Seasonally adjusted") %>% filter(GEO != "Outside Canada")
+
+wages <- wages %>% mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
+  mutate(REF_DATE = ymd(REF_DATE))
 
 wages
+```
+
+```{r}
+## Now to turn LFS into a TS
+
+# Q.1 = LFS_2018 %>%  
+#   # find year & quarter
+#   mutate( Y = year( survdate ), Q = quarter( survdate ),
+#           index = yearqtr( Y + Q/4 ) ) %>%  
+#   xts( x=.$lfsstat, order.by =.$index) 
+# # plot(Q)
+# # Monthly data 
+# M.1 = LFS_2018 %>% 
+#   # find year, quarter, month, and month-in-quarter
+#   mutate( Y = year( survdate ), Q = quarter( survdate ), 
+#           index = yearqtr( Y + Q/4 ), 
+#           M = month( survdate ),
+#           MinQ = paste( "M", M%%13, sep="" ) ) %>%  
+#   # spread monthly data into 12 columns one for each month-in-quarter
+#   pivot_wider(id_cols = index, names_from = MinQ, 
+#               values_from = lfsstat ) %>% 
+#   xts( x=.[,c("M0","M1","M2","M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11")], order.by =.$index)
+# 
+# LFS2 = merge(Q.1, M.1, join = "inner" )
+```
+
+```{r}
+#Attempt at making LFS_2018 a TS
+LFS_2018 %>% select(lfsstat) -> lfs_st
+
+ts(lfs_st, start = c(2018, 01), frequency = 12) -> lfs_st_ts
+
+plot(lfs_st_ts)
+```
+
+
+```{r}
+#Attempting to make Wages a TS
+wages %>% filter(GEO == "Canada") %>% 
+  filter(Sector == "Wages and salaries") %>% 
+  select(VALUE) -> CanWS
+CanWS
+ts(CanWS, start = c(1997,01), end = c(2019,6), frequency = 12) -> CanWS_ts
+
+plot(CanWS_ts)
+
+#difference to make stationary 
+CanWS_ts_log_diff <- diff(log(CanWS_ts))
+plot(CanWS_ts_log_diff)
 ```
 
