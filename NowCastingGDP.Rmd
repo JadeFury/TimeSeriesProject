@@ -192,6 +192,47 @@ plot(X2)
 
 ```
 
+Decomposing the Quarterly Data:
+```{r}
+decompose.xts <-
+function (x, type = c("additive", "multiplicative"), filter = NULL) 
+{
+  dts <- decompose(as.ts(x), type, filter)
+  dts$x <- .xts(dts$x, .index(x))
+  dts$seasonal <- .xts(dts$seasonal, .index(x))
+  dts$trend <- .xts(dts$trend, .index(x))
+  dts$random <- .xts(dts$random, .index(x))
+
+  with(dts,
+  structure(list(x = x, seasonal = seasonal, trend = trend,
+    random = if (type == "additive") x - seasonal - trend else x/seasonal/trend, 
+    figure = figure, type = type), class = "decomposed.xts"))
+}
+
+plot.decomposed.xts <-
+function(x, ...)
+{
+  xx <- x$x
+  if (is.null(xx))
+    xx <- with(x,
+      if (type == "additive") random + trend + seasonal
+      else random * trend * seasonal)
+  p <- cbind(observed = xx, trend = x$trend, seasonal = x$seasonal, random = x$random)
+  plot(p, main = paste("Decomposition of", x$type, "time series"), multi.panel = 4,
+       yaxis.same = FALSE, major.ticks = "days", grid.ticks.on = "days", ...)
+}
+
+QDecom = decompose.xts(X2$Q)
+plot(QDecom)
+```
+There's a clear upward trend and seasonality present.
+
+Checking Stationarity of the Quarterly series:
+```{r}
+adf.test(X2$Q) #Alternative stationary not working
+```
+Not Stationary, have to implement differencing
+
 Now to try some log differencing:
 ```{r}
 X2.l.d <- diff(log(X2))
@@ -202,10 +243,24 @@ plot(X2.l.d)
 ```{r}
 # ACF PACF of differenced GDP seems
 acf( X2$Q, na.action = na.pass ) 
-acf( X2$Q, na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
+acf( diff(X2$Q), na.action = na.pass ) ;pacf( diff(X2$Q), na.action = na.pass )
 ```
 
+```{r}
+Qdiff = diff(log(X2$Q), differences = 1)
+plot(Qdiff)
+adf.test(Qdiff) #Test not working
+
+acf(Qdiff, na.action = na.pass, main='ACF for Differenced Series')
+pacf(Qdiff, na.action = na.pass, main='PACF for Differenced Series') 
+```
+We test with AR 1 or 2 and MA 1 for arima model
+
 Standard ARMA model
+```{r}
+ARMAacf()
+```
+
 
 Arima models w/past information only -> 
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
