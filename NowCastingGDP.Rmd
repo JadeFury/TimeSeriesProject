@@ -231,7 +231,9 @@ There's a clear upward trend and seasonality present.
 
 Checking Stationarity of the Quarterly series:
 ```{r}
-adf.test(as.ts(X2$Q)) #Alternative stationary not working
+adf.test(X2$Q) #Alternative stationary not working
+
+adf.test(as.ts(X2$Q))
 ```
 Not Stationary, have to implement differencing
 
