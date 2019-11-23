@@ -18,6 +18,8 @@ library(modelr)
 library(broom)
 library(astsa)
 library(forecast)
+library(tseries)
+library(aTSA)
 library(xts) # better ts objects, including quarterly series
 
 #### Problem 2 ####
