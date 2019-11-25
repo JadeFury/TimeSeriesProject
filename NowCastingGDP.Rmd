@@ -175,8 +175,8 @@ arima_analysis <- function(df,p,d,q, regs) {
 #HERE AND BELOW
 month0 <- arima_analysis(X2$Q,1,1,1,X2$M0)
 summary(month0)
-predict(month0$model, n.ahead=1, newregs = predict(X2$M0)$fitted)
-
+#predict(month0$model, n.ahead=1, newregs = predict(X2$M0)$fitted)
+forecast(month0$model, xreg = X2$M0)$mean
 ```
 
 #Improving Model with Previous 2 Month's Data
