@@ -160,7 +160,40 @@ Compare
 ```
 
 
+```{r}
+arima_analysis <- function(df,p,d,q, regs) {
+  
+  (model <- Arima( y = df, order=c(p,d,q), xreg = regs,include.mean = TRUE))
+  tsdisplay(residuals(model), lag.max=45, main='Model Residuals')
+  (Info_Score <- cbind(AIC(model),BIC(model)))
+  model
+}
+```
 
+#Improving Model with Previous Month's Data
+```{r}
+#HERE AND BELOW
+month0 <- arima_analysis(X2$Q,1,1,1,X2$M0)
+summary(month0)
+predict(month0$model, n.ahead=1, newregs = predict(X2$M0)$fitted)
+
+```
+
+#Improving Model with Previous 2 Month's Data
+```{r}
+month01 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1")])
+summary(month01)
+predict(month01$model, n.ahead=1, newregs = cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted))
+
+```
+
+#Improving Model with Previous 3 Month's Data
+```{r}
+month012 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1","M2")])
+summary(month012)
+predict(month012$model, n.ahead=1,cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted,predict(X2$M2)$fitted))
+
+```
 
 
 Analyzing External Data
