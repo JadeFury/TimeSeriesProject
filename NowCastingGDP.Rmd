@@ -22,129 +22,8 @@ library(tseries)
 library(aTSA)
 library(xts) # better ts objects, including quarterly series
 
-#### Problem 2 ####
-
-# plot quarterly & monthly GDP 
-#This code is from the Draft
-get_cansim_vector( c( 
-  "monthly GDP" = "v65201210",
-  "quarterly GDP" = "v1000000673") ,
-    start_time = "2015-01-01" ) %>% 
-  normalize_cansim_values() %>% 
-  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
-  geom_line() + geom_point() + ylab("Chained (2012) dollars") +
-  ggtitle("Problem 2: Plot of quarterly & monthly GDP")
-
-
-```
-The graph shows that both the monthly and quarterly GDPs increase at almost exactly the same rate. This suggests that
-perhaps the two are highly correlated.
-
-
-In order to get a closer look at the existing pattern, we separated the monthly and quarterly GDP and then graphed them.
-```{r}
-get_cansim_vector( c( 
-  "monthly GDP (basic prices)" = "v65201210",
-  "quarterly GDP (expend-based)" = "v62305723") ,
-    start_time = "2010-01-01" ) %>% 
-  normalize_cansim_values() %>% 
-  ggplot( aes( x = Date, y = VALUE, col = label ) ) +
-  geom_line() + geom_point() + ylab("Chained (2012) dollars")
 ```
 
-Retrieving the data frame:
-```{r}
-get_cansim_vector( c( 
-  "monthly GDP (basic prices)" = "v65201210",
-  "quarterly GDP (expend-based)" = "v62305723") ,
-    start_time = "2009-01-01" ) %>% 
-    normalize_cansim_values() -> ncastDF
-```
-
-Summary Statistics for monthly and quarterly data
-```{r}
-ncastDF %>% group_by(label) %>% summarise(time_mean = mean(VALUE), time_var = var(VALUE), time_med = median(VALUE))
-```
-
-Spreading the labels to their own columns for model testing
-```{r}
-ncastDF %>% spread(label,VALUE) -> ncastSP
-ncastSP
-```
-
-Checking out the yearly pattern for some quarters and months
-```{r}
-glimpse(ncastDF)
-ncastDF %>% filter(label == "quarterly GDP (expend-based)" & year(Date) ==2010) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
-
-ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2010) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
-ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2011) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
-ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2012) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
-ncastDF %>% filter(label == "monthly GDP (basic prices)" & year(Date) ==2013) %>% ggplot(aes(Date,VALUE,col=label))+geom_line()
-```
-
-
-```{r}
-ggplot(ncast.1,aes(x=Date,y= VALUE,group = Date))+geom_boxplot()
-
-```
-
-Here, we can see that the variance between the values are more or less the same time progresses, while the mean steadily increases in an almost linear fashion.
-
-
-Taking a sample year to work with:
-```{r}
-ncastSP %>% filter(year(Date) >= 2018 & year(Date) <= 2019) -> ncast1
-
-
-ncast1 %>% mutate(monthly = case_when(
-                                  `monthly GDP (basic prices)` == NA ~ 0, 
-                                  is.na(`monthly GDP (basic prices)`) ~ 0,
-                                  TRUE ~ `monthly GDP (basic prices)`)) %>%
-  mutate(quarterly = case_when(
-                                  `quarterly GDP (expend-based)` == NA ~ 0, 
-                                  is.na(`quarterly GDP (expend-based)`) ~ 0,
-                                  TRUE ~ `quarterly GDP (expend-based)`)) %>% 
-  select(REF_DATE,releaseTime,Date,monthly,quarterly) -> ncastMQ
-
-
-
-```
-Replaced the NA with zeroes to work with models and other analysis.
-
-
-Sample model exploring the relationship between the quarterly and monthly values
-```{r}
-cor(ncastMQ$quarterly,ncastMQ$monthly)
-ncast.lm = lm(quarterly~monthly+Date,data = ncastMQ)
-summary(ncast.lm)
-```
-The model is off due to majority of the zeroes in our data
-
-
-```{r}
-ncastMQ %>% spread(Date,monthly) 
-```
-Ideal data frame to test the prediction of each quarter within a 3 month cohort.
-
-*Plan of Attack*
-Since the data we have is clearly dependent, i.e. the GDP for previous months would be dependent on eachother, we could use time series 
-methodologies to estimate the present and near future, in particular, we will attempt to fit an ARMA model for the data.
-
-In order to do this, we must construct a model of our time series. The essence of how we want to construct our model is that we want to 
-create a three month cohort for each quarter and attach them together. So what this means is that we want to create these quarterly bins 
-for each month starting with one year and experimenting with that. For example, if we were to predict the GDP for the first quarter of 
-2019, we would use the monthly GDP data from the previous 3 months. 
-
-Furthermore, in order to make full use of these methodologies, we’ll also check that our model is stationary. We may obtain evidence of 
-this by looking back even further, and see if there are any discrepancies between the joint distribution of monthly GDPs, by using ACF 
-and PACF plots. Additionally, we may check if the mean and variance functions are constant, or if γ(s,t) is function of h = s-t. If at 
-least one of these are not fulfilled we may have to change our model such that it will. There also may be the problem of seasonality in 
-the mean, for example the GDP of a country that relies heavily on tourist will fluctuate up and down throughout the year. In this case, 
-we could employ the moving average smoother to get rid of seasonality.
-
-After this, we can use the ACF and PACF plots to determine the order of our ARMA model. To check if our model is good, we should look at 
-the residuals and see that they have no pattern and are normally distributed. If they are not, we will refit the model as needed.
 
 ```{r}
 # Plot quarterly & monthly GDP 
@@ -255,15 +134,20 @@ Arima models w/past information only ->
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
 ```{r}
 (auto.model <- auto.arima(Qdiff, seasonal = FALSE))
-tsdisplay(residuals(auto.model), lag.max=45, main='(1,1,1) Model Residuals') 
-model.1 <- arima( x = Qdiff, order=c(1,1,1))
-tsdisplay(residuals(model.1), lag.max=45, main='(1,1,1) Model Residuals')
-model.2 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2$M0), differences = 1))
-tsdisplay(residuals(model.2), lag.max=45, main='(1,1,1) Model Residuals')
-model.3 <- arima( x = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1")]), differences = 1))
-tsdisplay(residuals(model.3), lag.max=45, main='(1,1,1) Model Residuals')
-model.4 <- Arima( y = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M0","M1","M2")]), differences = 1))
-tsdisplay(residuals(model.4), lag.max=45, main='(1,1,1) Model Residuals')
+tsdisplay(residuals(auto.model), lag.max=45, main='(1,0,1) Model Residuals') 
+
+model.1 <- Arima( y = X2$Q, order=c(1,1,1), include.mean = TRUE)
+tsdisplay(residuals(model.1), lag.max=45, main='(1,0,1) Model Residuals')
+
+model.2 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2$M0, include.mean = TRUE)
+tsdisplay(residuals(model.2), lag.max=45, main='(1,0,1) Model Residuals')
+
+model.3 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2[,c("M0","M1")], include.mean = TRUE)
+tsdisplay(residuals(model.3), lag.max=45, main='(1,0,1) Model Residuals')
+
+model.4 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2[,c("M0","M1","M2")], include.mean = TRUE)
+tsdisplay(residuals(model.4), lag.max=45, main='(1,0,1) Model Residuals')
+
 model.1 ; model.2 ; model.3 ; model.4
 ```
 
@@ -276,24 +160,7 @@ Compare
 ```
 
 
-```{r}
-arlm = lm(Q~M0+M1+M2,data = X2)
-summary(arlm)
-plot(arlm)
 
-arlm2 = lm(Q~M1+M2,data = X2)
-summary(arlm2)
-plot(arlm2)
-```
-The previous month's data isn't significant so we generate a new model with the previous second and third month's data:
-
-```{r}
-model.5 <- Arima( y = Qdiff, order=c(1,1,1),  xreg = diff(log(X2[,c("M1","M2")]), differences = 1))
-tsdisplay(residuals(model.5), lag.max=45, main='(1,1,1) Model Residuals')
-
-AIC(model.5)
-```
-The AIC for this model is lower than model.4 containing the previous month, we will go forward improving this model for predictions
 
 
 Analyzing External Data
