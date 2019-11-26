@@ -163,7 +163,7 @@ Compare
 ```{r}
 arima_analysis <- function(df,p,d,q, regs) {
   
-  (model <- Arima( y = df, order=c(p,d,q), xreg = regs,include.mean = TRUE))
+  (model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.mean = TRUE))
   tsdisplay(residuals(model), lag.max=45, main='Model Residuals')
   (Info_Score <- cbind(AIC(model),BIC(model)))
   model
@@ -183,7 +183,7 @@ forecast::forecast(month0, xreg = X2$M0)$mean
 ```{r}
 month01 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1")])
 summary(month01)
-predict(month01$model, n.ahead=1, newregs = cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted))
+forecast::forecast(month01$model, n.ahead=1, xreg = cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted))
 
 ```
 
@@ -191,8 +191,9 @@ predict(month01$model, n.ahead=1, newregs = cbind(predict(X2$M0)$fitted,predict(
 ```{r}
 month012 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1","M2")])
 summary(month012)
-predict(month012$model, n.ahead=1,cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted,predict(X2$M2)$fitted))
 
+a= forecast::forecast(month012, xreg = X2[,c("M0","M1","M2")] )
+plot(a)
 ```
 
 
