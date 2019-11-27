@@ -332,3 +332,13 @@ QdiffTest2 = cbind(predict(X2$M1)$fitted,predict(X2$M2)$fitted)
 valid = predict(model.5, newxreg=QdiffTest2)
 valid$pred
 ```
+
+```{r}
+foreign_ex_rates <- read.csv("Monthly avg foreign exchange rates.csv")
+
+foreign_ex_rates %>% rename(REF_DATE = ï..REF_DATE) %>% 
+  mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
+  mutate(REF_DATE = ymd(REF_DATE)) 
+```
+
+
