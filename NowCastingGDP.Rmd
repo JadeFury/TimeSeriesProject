@@ -248,11 +248,11 @@ plot(decompose(CanWS_ts_Monthly))
 plot(decompose(CanWS_ts_quarterly))
 
 #difference to make stationary 
-CanWS_ts_log_diff_q <- diff(log(CanWS_ts_quarterly))
-CanWS_ts_log_diff_M <- diff(log(CanWS_ts_Monthly))
-
-plot(CanWS_ts_log_diff_q)
-plot(CanWS_ts_log_diff_M)
+# CanWS_ts_log_diff_q <- diff(log(CanWS_ts_quarterly))
+# CanWS_ts_log_diff_M <- diff(log(CanWS_ts_Monthly))
+# 
+# plot(CanWS_ts_log_diff_q)
+# plot(CanWS_ts_log_diff_M)
 ```
 ```{r}
 #Compensation of employees	Time series
@@ -276,11 +276,11 @@ plot(decompose(Compensation_M))
 plot(decompose(Compensation_Q))
 
 #difference to make stationary 
-Comp_l_q <- diff(log(Compensation_Q))
-Comp_l_M <- diff(log(Compensation_M))
-
-plot(Comp_l_q)
-plot(Comp_l_M)
+# Comp_l_q <- diff(log(Compensation_Q))
+# Comp_l_M <- diff(log(Compensation_M))
+# 
+# plot(Comp_l_q)
+# plot(Comp_l_M)
 ```
 
 ```{r}
@@ -304,11 +304,11 @@ plot(decompose(services_prod_M))
 plot(decompose(services_prod_Q))
 
 #difference to make stationary 
-services_l_q <- diff(log(services_prod_M))
-services_l_M <- diff(log(services_prod_Q))
-
-plot(services_l_q)
-plot(services_l_M)
+# services_l_q <- diff(log(services_prod_M))
+# services_l_M <- diff(log(services_prod_Q))
+# 
+# plot(services_l_q)
+# plot(services_l_M)
 ```
 
 
