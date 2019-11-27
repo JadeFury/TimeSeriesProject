@@ -175,15 +175,19 @@ arima_analysis <- function(df,p,d,q, regs) {
 #HERE AND BELOW
 month0 <- arima_analysis(X2$Q,1,1,1,X2$M0)
 summary(month0)
-#predict(month0$model, n.ahead=1, newregs = predict(X2$M0)$fitted)
-forecast::forecast(month0, xreg = X2$M0)$mean
+
+cast0 = forecast::forecast(month0, xreg = X2[,c("M0")] )
+plot(cast0)
+
 ```
 
 #Improving Model with Previous 2 Month's Data
 ```{r}
 month01 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1")])
 summary(month01)
-forecast::forecast(month01$model, n.ahead=1, xreg = cbind(predict(X2$M0)$fitted,predict(X2$M1)$fitted))
+
+cast01 = forecast::forecast(month01, xreg = X2[,c("M0","M1")] )
+plot(cast01)
 
 ```
 
@@ -192,8 +196,10 @@ forecast::forecast(month01$model, n.ahead=1, xreg = cbind(predict(X2$M0)$fitted,
 month012 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1","M2")])
 summary(month012)
 
-a= forecast::forecast(month012, xreg = X2[,c("M0","M1","M2")] )
-plot(a)
+cast012 = forecast::forecast(month012, xreg = X2[,c("M0","M1","M2")] )
+plot(cast012)
+
+
 ```
 
 
@@ -320,18 +326,6 @@ plot(decompose(services_prod_Q))
 # plot(services_l_M)
 ```
 
-
-
-```{r}
-#Trying to fit a model on X2$Q with wages as external data
-model.wages <- arima( x = X2$Q, order=c(1,1,0),  xreg = CanWS_ts_quarterly)
-model.wages
-```
-```{r}
-QdiffTest2 = cbind(predict(X2$M1)$fitted,predict(X2$M2)$fitted)
-valid = predict(model.5, newxreg=QdiffTest2)
-valid$pred
-```
 
 ```{r}
 foreign_ex_rates <- read.csv("Monthly avg foreign exchange rates.csv")
