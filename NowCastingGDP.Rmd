@@ -241,9 +241,12 @@ ts(CanWS, start = c(1997,01), end = c(2019,6), frequency = 12) -> CanWS_ts_Month
 CanWS_ts_quarterly <- aggregate(CanWS_ts_Monthly, nfrequency = 4)
 CanWS_ts_quarterly
 
+CanWS_ts_Monthly <- as.xts(CanWS_ts_Monthly)
+CanWS_ts_quarterly <- as.xts(CanWS_ts_quarterly)
+
 #plot the ts 
-plot(CanWS_ts_Monthly)
-plot(CanWS_ts_quarterly)
+plot(CanWS_ts_Monthly, main='CanWS_ts_Monthly')
+plot(CanWS_ts_quarterly, main = 'CanWS_ts_quarterly')
 plot(decompose(CanWS_ts_Monthly))
 plot(decompose(CanWS_ts_quarterly))
 
@@ -269,9 +272,12 @@ ts(Compensation, start = c(1997,01), end = c(2019,6), frequency = 12) -> Compens
 Compensation_Q <- aggregate(Compensation_M, nfrequency = 4)
 Compensation_Q
 
+Compensation_M <- as.xts(Compensation_M)
+Compensation_Q <- as.xts(Compensation_Q)
+
 #plot the ts 
-plot(Compensation_M)
-plot(Compensation_Q)
+plot(Compensation_M, main = 'Compensation_M')
+plot(Compensation_Q, main = 'Compensation_Q')
 plot(decompose(Compensation_M))
 plot(decompose(Compensation_Q))
 
@@ -297,9 +303,12 @@ ts(services_prod, start = c(1997,01), end = c(2019,6), frequency = 12) -> servic
 services_prod_Q <- aggregate(services_prod_M, nfrequency = 4)
 services_prod_Q
 
+services_prod_M <- as.xts(services_prod_M)
+services_prod_Q <- as.xts(services_prod_Q)
+
 #plot the ts 
-plot(services_prod_Q)
-plot(services_prod_M)
+plot(services_prod_Q, main = 'services_prod_Q')
+plot(services_prod_M, main = 'services_prod_M')
 plot(decompose(services_prod_M))
 plot(decompose(services_prod_Q))
 
