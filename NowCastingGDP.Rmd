@@ -363,9 +363,20 @@ plot(decompose(services_prod_Q))
 ```{r}
 foreign_ex_rates <- read.csv("Monthly avg foreign exchange rates.csv")
 
-foreign_ex_rates %>% rename(REF_DATE = ï..REF_DATE) %>% 
-  mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
-  mutate(REF_DATE = ymd(REF_DATE)) 
+#foreign_ex_rates %>% rename(REF_DATE = ï..REF_DATE) %>% 
+#  mutate(REF_DATE = paste(REF_DATE, "01", sep = "-")) %>% 
+ # mutate(REF_DATE = ymd(REF_DATE)) 
+
+foreign_ex_rates_values <- foreign_ex_rates %>% 
+  filter(Type.of.currency  == 
+           "Canadian-Dollar Effective Exchange Rate Index (CERI), monthly average") %>% select(VALUE)
+
+
+#Create Ts
+ts(services_prod, start = c(1997,01), end = c(2019,10), frequency = 12) -> CERI_ts
+
+plot(CERI_ts, main = 'Canadian Effective Exchange Rate Index - Monthly AVG')
+
 ```
 
 
