@@ -412,7 +412,7 @@ foreign_ex_rates_values <- foreign_ex_rates %>%
 
 
 #Create Ts
-ts(services_prod, start = c(1997,01), end = c(2019,10), frequency = 12) -> CERI_ts
+ts(foreign_ex_rates_values, start = c(1997,01), end = c(2019,10), frequency = 12) -> CERI_ts
 
 plot(CERI_ts, main = 'Canadian Effective Exchange Rate Index - Monthly AVG')
 
