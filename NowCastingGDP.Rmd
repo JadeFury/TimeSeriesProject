@@ -281,6 +281,25 @@ for(i in (n - nCV:1) ){
 
 ```
 
+#Functions for each Arima Models
+```{r}
+Arima0 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+Arima01 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+Arima012 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+```
+
 
 ```{r}
 train_ts = QScale[1:63]
@@ -290,14 +309,14 @@ test_ts %>% tk_ts() -> test_ts
 
 
 models_list <- list(
-    Arima = list(
-        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2], include.drift = TRUE  
+    Arima0 = list(
+        df = train_ts[,1],p=1,d=1,q=1, regs = train_ts[,2]  
         ),
-    Arima = list(
-        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2:3], include.drift = TRUE
+    Arima01 = list(
+        df = train_ts[,1],p=1,d=1,q=1, regs = train_ts[,2:3]
     ),
-    Arima = list(
-        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2:4], include.drift = TRUE
+    Arima012 = list(
+        df = train_ts[,1],p=1,d=1,q=1, regs = train_ts[,2:4]
     )
 )
 
