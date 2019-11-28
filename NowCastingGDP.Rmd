@@ -191,26 +191,27 @@ n = nrow(QScale);
 nCV = 20 # number of corss validation errors
 y_fe = y_fe. = rep(NA,n) # Y forecast error 
 
-#GO OVER THIS WITH SOTIRIOS 
+
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(QScale) , QScale)
+ 
 for(i in (n - nCV:1) ){
+  
+  print(i)
+  
   # Increasing subsets of y,x
-  yt = QScale$Q[1:i]; xt = QScale[1:i, c("M0")]  
+  yt = QScale$Q[1:i]; xt = X[1:i,c("t","M0")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
   
-  out = Arima( yt , order=c(1,1,1),  xreg = xt)
-  
-  # fit regression with AR(1) residuals
-  Xt = cbind( 1:length(yt), xt)
-  out = Arima( yt , order=c(1,1,1),  xreg = Xt)
   
   # 1-step-ahead forecast erros using predict() function
-  y_fe[i+1] = predict( out, newxreg = xt[i+1] )$pred
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0")] ) $pred
   
-  # 1-step-ahead forecast erros with hand-coded prediction 
-  b0 = out$coef[2] # y mean
-  b1 = out$coef[3] # regression coefficient
-  phi = out$coef[1] # residual AR(1) coefficient
-  y_fe.[i+1] = b0 + b1 * xt[i+1] + phi * ( y[i] - b0 - b1 * xt[i] )
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0")] ), include.drift = T)
+  forecast::forecast(out2, xreg = matrix( X[i+1, c("M0")], 1 )  )
 }
+
 
 # Cross-Validated Performance 
 
