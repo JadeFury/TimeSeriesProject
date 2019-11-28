@@ -70,7 +70,8 @@ M = X2raw %>%
 X2 = merge(Q, M, join = "inner" )
 plot(X2)
 
-
+view(X2/(10^9))
+QScale = X2/(10^9)
 ```
 
 Decomposing the Quarterly Data:
@@ -103,22 +104,22 @@ function(x, ...)
        yaxis.same = FALSE, major.ticks = "days", grid.ticks.on = "days", ...)
 }
 
-QDecom = decompose.xts(X2$Q)
+QDecom = decompose.xts(QScale$Q)
 plot(QDecom)
 ```
 There's a clear upward trend and seasonality present.
 
 Checking Stationarity of the Quarterly series:
 ```{r}
-adf.test(X2$Q) #Alternative stationary not working
+adf.test(QScale$Q) #Alternative stationary not working
 
-adf.test(as.ts(X2$Q))
+adf.test(as.ts(QScale$Q))
 ```
 Not Stationary, have to implement differencing
 
 
 ```{r}
-Qdiff = diff(log(X2$Q), differences = 1)
+Qdiff = diff(log(QScale$Q), differences = 1)
 plot(Qdiff)
 adf.test(as.ts(Qdiff)) #Test not working
 
@@ -134,19 +135,19 @@ Arima models w/past information only ->
       w/ past information with M0 (start of quarter forecast) + M1 (1st month nowcast) + M2 (2nd month nowcast)
 ```{r}
 (auto.model <- auto.arima(Qdiff, seasonal = FALSE))
-tsdisplay(residuals(auto.model), lag.max=45, main='(1,0,1) Model Residuals') 
+tsdisplay(residuals(auto.model), lag.max=45, main='(1,1,1) Model Residuals') 
 
-model.1 <- Arima( y = X2$Q, order=c(1,1,1), include.mean = TRUE)
-tsdisplay(residuals(model.1), lag.max=45, main='(1,0,1) Model Residuals')
+model.1 <- Arima( y = QScale$Q, order=c(1,1,1), include.drift = TRUE)
+tsdisplay(residuals(model.1), lag.max=45, main='(1,1,1) Model Residuals')
 
-model.2 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2$M0, include.mean = TRUE)
-tsdisplay(residuals(model.2), lag.max=45, main='(1,0,1) Model Residuals')
+model.2 <- Arima( y = QScale$Q, order=c(1,1,1),  xreg = QScale$M0, include.drift = TRUE)
+tsdisplay(residuals(model.2), lag.max=45, main='(1,1,1) Model Residuals')
 
-model.3 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2[,c("M0","M1")], include.mean = TRUE)
-tsdisplay(residuals(model.3), lag.max=45, main='(1,0,1) Model Residuals')
+model.3 <- Arima( y = QScale$Q, order=c(1,1,1),  xreg = QScale[,c("M0","M1")], include.drift = TRUE)
+tsdisplay(residuals(model.3), lag.max=45, main='(1,1,1) Model Residuals')
 
-model.4 <- Arima( y = X2$Q, order=c(1,1,1),  xreg = X2[,c("M0","M1","M2")], include.mean = TRUE)
-tsdisplay(residuals(model.4), lag.max=45, main='(1,0,1) Model Residuals')
+model.4 <- Arima( y = QScale$Q, order=c(1,1,1),  xreg = QScale[,c("M0","M1","M2")], include.drift = TRUE)
+tsdisplay(residuals(model.4), lag.max=45, main='(1,1,1) Model Residuals')
 
 model.1 ; model.2 ; model.3 ; model.4
 ```
@@ -163,40 +164,77 @@ Compare
 ```{r}
 arima_analysis <- function(df,p,d,q, regs) {
   
-  (model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.mean = TRUE))
+  (model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE))
   tsdisplay(residuals(model), lag.max=45, main='Model Residuals')
   (Info_Score <- cbind(AIC(model),BIC(model)))
-  model
+  return(model)
 }
 ```
 
 #Improving Model with Previous Month's Data
 ```{r}
 #HERE AND BELOW
-month0 <- arima_analysis(X2$Q,1,1,1,X2$M0)
+#70-30% Split
+train0 = QScale[1:63]
+test0 = QScale[64:90]
+month0 <- arima_analysis(train0$Q,1,1,1,train0$M0)
 summary(month0)
-
-cast0 = forecast::forecast(month0, xreg = X2[,c("M0")] )
+#Forecasting with the testing set
+cast0 = forecast::forecast(month0, xreg = test0[,c("M0")] )
 plot(cast0)
 
+n = nrow(QScale); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
+
+#GO OVER THIS WITH SOTIRIOS 
+for(i in (n - nCV:1) ){
+  # Increasing subsets of y,x
+  yt = QScale$Q[1:i]; xt = QScale[1:i, c("M0")]  
+  
+  out = Arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  # fit regression with AR(1) residuals
+  Xt = cbind( 1:length(yt), xt)
+  out = Arima( yt , order=c(1,1,1),  xreg = Xt)
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = xt[i+1] )$pred
+  
+  # 1-step-ahead forecast erros with hand-coded prediction 
+  b0 = out$coef[2] # y mean
+  b1 = out$coef[3] # regression coefficient
+  phi = out$coef[1] # residual AR(1) coefficient
+  y_fe.[i+1] = b0 + b1 * xt[i+1] + phi * ( y[i] - b0 - b1 * xt[i] )
+}
+
+# Cross-Validated Performance 
+
+(MSPE = mean( (y - y_fe.)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
 ```
 
 #Improving Model with Previous 2 Month's Data
 ```{r}
-month01 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1")])
+train01 = QScale[1:63]
+test01 = QScale[64:90]
+month01 <- arima_analysis(train01$Q,1,1,1,train01[,c("M0","M1")])
 summary(month01)
 
-cast01 = forecast::forecast(month01, xreg = X2[,c("M0","M1")] )
+cast01 = forecast::forecast(month01, xreg = test01[,c("M0","M1")] )
 plot(cast01)
 
 ```
 
 #Improving Model with Previous 3 Month's Data
 ```{r}
-month012 <- arima_analysis(X2$Q,1,1,1,X2[,c("M0","M1","M2")])
+train012 = QScale[1:63]
+test012 = QScale[64:90]
+month012 <- arima_analysis(train012$Q,1,1,1,train012[,c("M0","M1","M2")])
 summary(month012)
 
-cast012 = forecast::forecast(month012, xreg = X2[,c("M0","M1","M2")] )
+cast012 = forecast::forecast(month012, xreg = test012[,c("M0","M1","M2")] )
 plot(cast012)
 
 
@@ -235,6 +273,7 @@ for(i in (n - nCV:1) ){
 (MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
 
 ```
+
 
 Analyzing External Data
 
