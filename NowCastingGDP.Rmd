@@ -21,6 +21,9 @@ library(forecast)
 library(tseries)
 library(aTSA)
 library(xts) # better ts objects, including quarterly series
+library(tidyquant)
+library(timetk)
+library(sweep)
 
 ```
 
@@ -179,6 +182,7 @@ train0 = QScale[1:63]
 test0 = QScale[64:90]
 month0 <- arima_analysis(train0$Q,1,1,1,train0$M0)
 summary(month0)
+
 #Forecasting with the testing set
 cast0 = forecast::forecast(month0, xreg = test0[,c("M0")] )
 plot(cast0)
@@ -214,6 +218,9 @@ for(i in (n - nCV:1) ){
 
 (MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
 ```
+
+
+
 
 #Improving Model with Previous 2 Month's Data
 ```{r}
@@ -272,6 +279,54 @@ for(i in (n - nCV:1) ){
 
 (MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
 
+```
+
+
+```{r}
+train_ts = QScale[1:63]
+test_ts = QScale[64:90]
+train_ts %>% tk_ts() -> train_ts
+test_ts %>% tk_ts() -> test_ts
+
+
+models_list <- list(
+    Arima = list(
+        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2], include.drift = TRUE  
+        ),
+    Arima = list(
+        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2:3], include.drift = TRUE
+    ),
+    Arima = list(
+        y = train_ts[,1],order = c(1,1,1), xreg = train_ts[,2:4], include.drift = TRUE
+    )
+)
+
+models_tbl <- enframe(models_list, name = "f", value = "params")
+
+
+models_tbl_fit <- models_tbl %>%
+    mutate(fit = invoke_map(f, params))
+
+
+models_tbl_fit %>%
+    mutate(tidy = map(fit, sw_tidy)) %>%
+    unnest(tidy) %>%
+    spread(key = f, value = estimate)
+
+models_tbl_fit %>%
+    mutate(glance = map(fit, sw_glance)) %>%
+    unnest(glance, .drop = TRUE)
+
+models_tbl_fit %>%
+    mutate(augment = map(fit, sw_augment, rename_index = "date")) %>%
+    unnest(augment) %>%
+    ggplot(aes(x = date, y = .resid, group = f)) +
+    geom_line(color = palette_light()[[2]]) +
+    geom_point(color = palette_light()[[1]]) +
+    geom_smooth(method = "loess") +
+    facet_wrap(~ f, nrow = 3) +
+    labs(title = "Residuals Plot") +
+    theme_tq()
 ```
 
 
