@@ -206,18 +206,19 @@ for(i in (n - nCV:1) ){
   
   
   # 1-step-ahead forecast erros using predict() function
-  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0")] ) $pred
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0")] )$pred
   
   out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0")] ), include.drift = T)
-  forecast::forecast(out2, xreg = matrix( X[i+1, c("M0")], 1 )  )
+  fit = forecast::forecast(out2, xreg = matrix( X[i+1, c("M0")], 1 )  )
+  
 }
 
-
+summary(fit)
+plot(fit)
 # Cross-Validated Performance 
+(MSPE = mean( (QScale$Q - y_fe)^2, na.rm = TRUE ))
 
-(MSPE = mean( (y - y_fe.)^2, na.rm = TRUE ))
-
-(MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
+(MAPE = mean( abs(QScale$Q - y_fe)/abs(QScale$Q), na.rm = TRUE ))
 ```
 
 
@@ -233,6 +234,41 @@ summary(month01)
 cast01 = forecast::forecast(month01, xreg = test01[,c("M0","M1")] )
 plot(cast01)
 
+n = nrow(QScale); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
+
+
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(QScale) , QScale)
+ 
+for(i in (n - nCV:1) ){
+  
+  print(i)
+  
+  # Increasing subsets of y,x
+  yt = QScale$Q[1:i]; xt = X[1:i,c("t","M0","M1")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0","M1")] )$pred
+  
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0","M1")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = matrix( X[i+1, c("M0","M1")], 1 )  )
+  
+}
+
+
+
+summary(fit)
+plot(fit)
+# Cross-Validated Performance 
+(MSPE = mean( (QScale$Q - y_fe)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(QScale$Q - y_fe)/abs(QScale$Q), na.rm = TRUE ))
+
 ```
 
 #Improving Model with Previous 3 Month's Data
@@ -245,7 +281,38 @@ summary(month012)
 cast012 = forecast::forecast(month012, xreg = test012[,c("M0","M1","M2")] )
 plot(cast012)
 
+n = nrow(QScale); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
 
+
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(QScale) , QScale)
+ 
+for(i in (n - nCV:1) ){
+  
+  print(i)
+  
+  # Increasing subsets of y,x
+  yt = QScale$Q[1:i]; xt = X[1:i,c("t","M0","M1","M2")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0","M1","M2")] )$pred
+  
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0","M1","M2")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = matrix( X[i+1, c("M0","M1","M2")], 1 )  )
+  
+}
+
+summary(fit)
+plot(fit)
+# Cross-Validated Performance 
+(MSPE = mean( (QScale$Q - y_fe)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(QScale$Q - y_fe)/abs(QScale$Q), na.rm = TRUE ))
 ```
 
 ```{r}
