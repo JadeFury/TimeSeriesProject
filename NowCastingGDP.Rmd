@@ -255,8 +255,8 @@ for(i in (n - nCV:1) ){
   # 1-step-ahead forecast erros using predict() function
   y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0","M1")] )$pred
   
-  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0","M1")] ), include.drift = T)
-  fit = forecast::forecast(out2, xreg = matrix( X[i+1, c("M0","M1")], 1 )  )
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = X[1:i,c("M0","M1")], include.drift = T)
+  fit = forecast::forecast(out2, xreg = as.matrix( X[i+1, c("M0","M1")], 1 )  )
   
 }
 
@@ -302,8 +302,8 @@ for(i in (n - nCV:1) ){
   # 1-step-ahead forecast erros using predict() function
   y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0","M1","M2")] )$pred
   
-  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = matrix( X[1:i,c("M0","M1","M2")] ), include.drift = T)
-  fit = forecast::forecast(out2, xreg = matrix( X[i+1, c("M0","M1","M2")], 1 )  )
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = as.matrix( X[1:i,c("M0","M1","M2")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = as.matrix( X[i+1, c("M0","M1","M2")], 1 )  )
   
 }
 
