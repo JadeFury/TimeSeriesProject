@@ -571,23 +571,23 @@ cpi; imports; exports; rates; ippi; raw_materials_pi
 
 #Create Ts
 #imports
-ts(imports$VALUE, start = c(1988,01), end = c(2019,09), frequency = 12) -> imports_ts
+ts(imports$VALUE, start = c(1997,01), end = c(2019,09), frequency = 12) -> imports_ts
 plot(imports_ts, main = 'Imports - Monthly data')
 
 #exports
-ts(exports$VALUE, start = c(1988,01), end = c(2019,09), frequency = 12) -> exports_ts
+ts(exports$VALUE, start = c(1997,01), end = c(2019,09), frequency = 12) -> exports_ts
 plot(exports_ts, main = 'Exports - Monthly data')
 
 #Rates 
-ts(rates$VALUE, start = c(1981,05), end = c(2019,10), frequency = 12) -> rates_ts
+ts(rates$VALUE, start = c(1997,01), end = c(2019,10), frequency = 12) -> rates_ts
 plot(rates_ts, main = 'Rates - Monthly data')
 
 #ippi
-ts(ippi$VALUE, start = c(1956,01), end = c(2019,10), frequency = 12) -> ippi_ts
+ts(ippi$VALUE, start = c(1997,01), end = c(2019,10), frequency = 12) -> ippi_ts
 plot(ippi_ts, main = 'Ippi - Monthly data')
 
 #Raw Materials
-ts(raw_materials_pi$VALUE, start = c(1981,01), end = c(2019,10), frequency = 12) -> raw_materials_ts
+ts(raw_materials_pi$VALUE, start = c(1997,01), end = c(2019,10), frequency = 12) -> raw_materials_ts
 plot(raw_materials_ts, main = 'Raw Materials - Monthly data')
 
 
