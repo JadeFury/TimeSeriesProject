@@ -560,4 +560,12 @@ plot(CERI_ts, main = 'Canadian Effective Exchange Rate Index - Monthly AVG')
 
 ```
 
+```{r}
+load("my.RData")
+```
+
+```{r}
+## Note imports and exports are in terms of millions
+cpi; imports; exports; rates; ippi; raw_materials_pi
+```
 
