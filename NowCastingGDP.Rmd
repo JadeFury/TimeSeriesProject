@@ -572,6 +572,7 @@ imports_xts = imports %>%
   mutate( importM0 = lag(importM0) ) %>% 
   xts( x=.[,c("importM0","importM1","importM2")], order.by =.$index)
 
+imports_xts <- imports_xts/(1000)
 
 #Trying to merge exportsTs to original data 
 # Monthly data 
@@ -588,6 +589,7 @@ exports_xts = imports %>%
   mutate( exportM0 = lag(exportM0) ) %>% 
   xts( x=.[,c("exportM0","exportM1","exportM2")], order.by =.$index)
 
+exports_xts <- exports_xts/(1000)
 
 # combine with Qscale
 Qscale_imports = merge(QScale, imports_xts, join = "inner" )
