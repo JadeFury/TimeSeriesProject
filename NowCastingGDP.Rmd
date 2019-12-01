@@ -627,7 +627,26 @@ Qscale_rates = merge(Qscale_exports, rates_xts, join = "inner" )
 Qscale_rates
 ```
 
+```{r}
+#Trying to merge rates Ts to original data 
+# Monthly data 
+ippi_xts = ippi %>%  
+  # find year, quarter, month, and month-in-quarter
+  mutate( Y = year( Date ), Q = quarter( Date ), 
+          index = yearqtr( Y + Q/4 ), 
+          M = month( Date ),
+          MinQ = paste( "ippiM", M%%3, sep="" ) ) %>%  
+  # spread monthly data into 3 columns one for each month-in-quarter
+  pivot_wider(id_cols = index, names_from = MinQ, 
+              values_from = VALUE ) %>% 
+  # take lag for M0
+  mutate( ippiM0 = lag(ippiM0) ) %>% 
+  xts( x=.[,c("ippiM0","ippiM1","ippiM2")], order.by =.$index)
 
+# combine with Qscale_imports
+Qscale_ippi = merge(Qscale_rates, ippi_xts, join = "inner" )
+Qscale_ippi
+```
 
 
 
