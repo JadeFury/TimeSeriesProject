@@ -592,7 +592,7 @@ rates_xts = rates %>%
   mutate( Y = year( Date ), Q = quarter( Date ), 
           index = yearqtr( Y + Q/4 ), 
           M = month( Date ),
-          MinQ = paste( "cpiM", M%%3, sep="" ) ) %>%  
+          MinQ = paste( "ratesM", M%%3, sep="" ) ) %>%  
   # spread monthly data into 3 columns one for each month-in-quarter
   pivot_wider(id_cols = index, names_from = MinQ, 
               values_from = VALUE ) %>% 
@@ -655,7 +655,7 @@ cpi_xts = cpi %>%
   mutate( Y = year( Date ), Q = quarter( Date ), 
           index = yearqtr( Y + Q/4 ), 
           M = month( Date ),
-          MinQ = paste( "raw_matM", M%%3, sep="" ) ) %>%  
+          MinQ = paste( "cpiM", M%%3, sep="" ) ) %>%  
   # spread monthly data into 3 columns one for each month-in-quarter
   pivot_wider(id_cols = index, names_from = MinQ, 
               values_from = VALUE ) %>% 
