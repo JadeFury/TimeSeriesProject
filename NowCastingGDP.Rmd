@@ -713,3 +713,40 @@ summary(modelselect2)
 modelselect3 = lm(Q~M0+importM0+exportM0+exportM1+ratesM0+ratesM1+raw_matM0+raw_matM1+cpiM0+cpiM1, data = month012_ext)
 summary(modelselect3)
 ```
+
+
+```{r}
+# using step function to automate selection
+
+modelselect0 = lm(Q~M0+importM0+exportM0+ratesM0+ippiM0+raw_matM0+cpiM0, data = month0_ext)
+summary(modelselect1)
+
+modelselect0.1 <- step(modelselect1, direction = "backward")
+
+summary(modelselect0.1)
+```
+
+
+```{r}
+modelselect01 = lm(Q~M0+M1+importM0+importM1+exportM0+exportM1+ratesM0+ratesM1+ippiM0+ippiM1+raw_matM0+raw_matM1+cpiM0+cpiM1, data = month01_ext)
+summary(modelselect1)
+
+modelselect01.1 <- step(modelselect1, direction = "backward")
+
+summary(modelselect01.1)
+```
+
+
+
+```{r}
+modelselect012 = lm(Q~M0+M1+M2+importM0+importM1+importM2+exportM0+exportM1+exportM2+ratesM0+ratesM1+ratesM2+ippiM0+ippiM1+ippiM2+raw_matM0+raw_matM1+raw_matM2+cpiM0+cpiM1+cpiM2, data = month012_ext)
+summary(modelselect1)
+
+modelselect012.1 <- step(modelselect1, direction = "backward")
+
+summary(modelselect012.1)
+```
+
+
+
+
