@@ -591,5 +591,25 @@ ts(raw_materials_pi$VALUE, start = c(1997,01), end = c(2019,10), frequency = 12)
 plot(raw_materials_ts, main = 'Raw Materials - Monthly data')
 
 
+#Trying to merge importsTs to original data 
+# Monthly data 
+imports_xts = imports %>%  
+  # find year, quarter, month, and month-in-quarter
+  mutate( Y = year( Date ), Q = quarter( Date ), 
+          index = yearqtr( Y + Q/4 ), 
+          M = month( Date ),
+          MinQ = paste( "importM", M%%3, sep="" ) ) %>%  
+  # spread monthly data into 3 columns one for each month-in-quarter
+  pivot_wider(id_cols = index, names_from = MinQ, 
+              values_from = VALUE ) %>% 
+  # take lag for M0
+  mutate( importM0 = lag(importM0) ) %>% 
+  xts( x=.[,c("importM0","importM1","importM2")], order.by =.$index) 
+
+# combine with Qscale
+Qscale_imports = merge(QScale, imports_xts, join = "inner" )
+Qscale_imports
+
+
 ```
 
