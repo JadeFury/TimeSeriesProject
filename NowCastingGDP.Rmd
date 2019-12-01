@@ -315,40 +315,6 @@ plot(fit)
 (MAPE = mean( abs(QScale$Q - y_fe)/abs(QScale$Q), na.rm = TRUE ))
 ```
 
-```{r}
-n = nrow(X2); 
-nCV = 20 # number of corss validation errors
-y_fe = y_fe. = rep(NA,n) # Y forecast error 
-
-for(i in (n - nCV:1) ){
-  # Increasing subsets of y,x
-  yt = X2$Q[2:i]; xt = X2[2:i, c("M0","M1","M2")]  
-  
-  out = Arima( yt , order=c(1,1,1),  xreg = xt )
-  
-  # fit regression with AR(1) residuals
-  Xt = cbind( 1:length(yt), xt)
-  out = Arima( yt , order=c(1,1,1),  xreg = Xt )
-  out = arima( yt, order = c(0,1,0), xreg = Xt[,1]) 
-  
-  # 1-step-ahead forecast erros using predict() function
-  y_fe[i+1] = predict( out, newxreg = x[i+1] )$pred
-  
-  # 1-step-ahead forecast erros with hand-coded prediction 
-  b0 = out$coef[2] # y mean
-  b1 = out$coef[3] # regression coefficient
-  phi = out$coef[1] # residual AR(1) coefficient
-  y_fe.[i+1] = b0 + b1 * x[i+1] + phi * ( y[i] - b0 - b1 * x[i] )
-}
-
-# Cross-Validated Performance 
-
-(MSPE = mean( (y - y_fe.)^2, na.rm = TRUE ))
-
-(MAPE = mean( abs(y - y_fe.)/abs(y), na.rm = TRUE ))
-
-```
-
 #Functions for each Arima Models
 ```{r}
 Arima0 <- function(df,p,d,q, regs) {
