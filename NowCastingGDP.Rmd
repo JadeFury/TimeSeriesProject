@@ -647,4 +647,23 @@ Qscale_raw_mat = merge(Qscale_ippi, raw_mat_xts, join = "inner" )
 Qscale_raw_mat
 ```
 
+```{r}
+#Trying to merge rates Ts to original data 
+# Monthly data 
+cpi_xts = cpi %>%  
+  # find year, quarter, month, and month-in-quarter
+  mutate( Y = year( Date ), Q = quarter( Date ), 
+          index = yearqtr( Y + Q/4 ), 
+          M = month( Date ),
+          MinQ = paste( "raw_matM", M%%3, sep="" ) ) %>%  
+  # spread monthly data into 3 columns one for each month-in-quarter
+  pivot_wider(id_cols = index, names_from = MinQ, 
+              values_from = VALUE ) %>% 
+  # take lag for M0
+  mutate( cpiM0 = lag(cpiM0) ) %>% 
+  xts( x=.[,c("cpiM0","cpiM1","cpiM2")], order.by =.$index)
 
+# combine with Qscale_imports
+Qscale_cpi = merge(Qscale_raw_mat, cpi_xts, join = "inner" )
+Qscale_cpi
+```
