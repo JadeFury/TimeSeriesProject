@@ -570,11 +570,32 @@ imports_xts = imports %>%
               values_from = VALUE ) %>% 
   # take lag for M0
   mutate( importM0 = lag(importM0) ) %>% 
-  xts( x=.[,c("importM0","importM1","importM2")], order.by =.$index) 
+  xts( x=.[,c("importM0","importM1","importM2")], order.by =.$index)
+
+
+#Trying to merge exportsTs to original data 
+# Monthly data 
+exports_xts = imports %>%  
+  # find year, quarter, month, and month-in-quarter
+  mutate( Y = year( Date ), Q = quarter( Date ), 
+          index = yearqtr( Y + Q/4 ), 
+          M = month( Date ),
+          MinQ = paste( "exportM", M%%3, sep="" ) ) %>%  
+  # spread monthly data into 3 columns one for each month-in-quarter
+  pivot_wider(id_cols = index, names_from = MinQ, 
+              values_from = VALUE ) %>% 
+  # take lag for M0
+  mutate( exportM0 = lag(exportM0) ) %>% 
+  xts( x=.[,c("exportM0","exportM1","exportM2")], order.by =.$index)
+
 
 # combine with Qscale
 Qscale_imports = merge(QScale, imports_xts, join = "inner" )
 Qscale_imports
+
+# combine with Qscale_imports
+Qscale_exports = merge(Qscale_imports, exports_xts, join = "inner" )
+Qscale_exports
 
 
 ```
