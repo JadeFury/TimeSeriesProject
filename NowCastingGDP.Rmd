@@ -704,18 +704,6 @@ month01_ext
 ```
 
 ```{r}
-#starting manual stepwise selection of variables
-#can probably automate using olsrr package but need to convert to tibble or regular data frame instead of xts zoo
-modelselect1 = lm(Q~M0+M1+importM0+importM1+exportM0+exportM1+ratesM0+ratesM1+ippiM0+ippiM1+raw_matM0+raw_matM1+cpiM0+cpiM1, data = month012_ext)
-summary(modelselect1)
-modelselect2 = lm(Q~M0+importM0+exportM0+exportM1+ratesM0+ratesM1+ippiM1+raw_matM0+raw_matM1+cpiM0+cpiM1, data = month012_ext)
-summary(modelselect2)
-modelselect3 = lm(Q~M0+importM0+exportM0+exportM1+ratesM0+ratesM1+raw_matM0+raw_matM1+cpiM0+cpiM1, data = month012_ext)
-summary(modelselect3)
-```
-
-
-```{r}
 # using step function to automate selection
 
 modelselect0 = lm(Q~M0+importM0+exportM0+ratesM0+ippiM0+raw_matM0+cpiM0, data = month0_ext)
