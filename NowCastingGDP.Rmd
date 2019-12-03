@@ -677,11 +677,13 @@ mean_ratesM1 <- mean(Qscale_cpi[,"ratesM1"], na.rm = T)
 
 mean_ratesM2 <- mean(Qscale_cpi[,"ratesM2"], na.rm = T)
 
-# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM0"], mean_ratesM0)
-# 
-# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM1"], mean_ratesM1)
-# 
-# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM2"], mean_ratesM2)
+Qscale_cpi[,"ratesM0"] <- na.fill(Qscale_cpi[,"ratesM0"], mean_ratesM0)
+
+Qscale_cpi[,"ratesM1"] <- na.fill(Qscale_cpi[,"ratesM1"], mean_ratesM1)
+
+Qscale_cpi[,"ratesM2"] <- na.fill(Qscale_cpi[,"ratesM2"], mean_ratesM2)
+
+view(Qscale_cpi)
 ```
 
 
