@@ -694,7 +694,7 @@ month01_ext
 
 
 ```{r}
-# Now First we want all the month01 variables
+# Now First we want all the month012 variables
 
 month012_ext <- Qscale_cpi
 
