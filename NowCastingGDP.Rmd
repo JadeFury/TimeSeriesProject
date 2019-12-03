@@ -766,7 +766,7 @@ plot(month012_opt)
 These variables are the most significant in determining the next quarter's value from this dataset. The previous month's data was found to be not significant.
 
 Arima Model to forecast based on new regressors:
-
+M012 MODEL
 ```{r}
 train012 = month012_ext[1:64]
 test012 = month012_ext[65:91]
@@ -828,8 +828,50 @@ Arima012 <- function(df,p,d,q, regs) {
   return(model)
 }
 ```
+M01 MODEL
+```{r}
+training01 = month01_ext[1:64]
+testing01 = month01_ext[65:90]
+month01arima <- arima_analysis(training01$Q,1,1,1,training01[,c("M1","ippiM0","cpiM0","raw_matM1")])
+summary(month01arima)
+
+cast01 = forecast::forecast(month01arima, xreg = testing01[,c("M1","ippiM0","cpiM0","raw_matM1")])
+plot(cast01)
+
+n = nrow(month0_ext); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
 
 
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(month01_ext) , month01_ext)
+
+for(i in (n - nCV:1) ){
+  
+  print(i)
+  
+  # Increasing subsets of y,x
+  yt = month01_ext$Q[1:i]; xt = X[1:i,c("t","M1","ippiM0","cpiM0","raw_matM1")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M1","ippiM0","cpiM0","raw_matM1")] )$pred
+  
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = as.matrix( X[1:i,c("M1","ippiM0","cpiM0","raw_matM1")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = as.matrix( X[i+1, c("M1","ippiM0","cpiM0","raw_matM1")], 1 )  )
+  
+}
+
+summary(fit)
+plot(fit)
+# Cross-Validated Performance 
+(MSPE = mean( (month01_ext$Q - y_fe)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(month01_ext$Q - y_fe)/abs(month01_ext$Q), na.rm = TRUE ))
+```
+M0 MODEL
 ```{r}
 training0 = month0_ext[1:64]
 testing0 = month0_ext[65:90]
