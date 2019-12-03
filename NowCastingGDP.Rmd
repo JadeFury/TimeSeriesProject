@@ -700,7 +700,7 @@ month012_ext <- Qscale_cpi
 
 month01_ext <- na.fill(month01_ext, 0)
 
-month01_ext
+month012_ext <- na.fill(month012_ext,0)
 ```
 
 ```{r}
