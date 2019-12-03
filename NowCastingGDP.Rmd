@@ -755,6 +755,76 @@ modelselect012.1 <- step(modelselect012, direction = "backward")
 summary(modelselect012.1)
 ```
 
+Running month012 model with only the significant variables chosen:
+```{r}
+month012_opt = lm(Q~M1+M2+importM2+raw_matM1, data = month012_ext)
+summary(month012_opt)
+plot(month012_opt)
+```
+These variables are the most significant in determining the next quarter's value from this dataset. The previous month's data was found to be not significant.
 
+Arima Model to forecast based on new regressors:
+
+```{r}
+train012 = month012_ext[1:64]
+test012 = month012_ext[65:91]
+month012 <- arima_analysis(train012$Q,1,1,1,train012[,c("M1","M2","importM2","raw_matM1")])
+summary(month012)
+
+cast012 = forecast::forecast(month012, xreg = test012[,c("M1","M2","importM2","raw_matM1")] )
+plot(cast012)
+
+n = nrow(month012_ext); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
+
+
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(month012_ext) , month012_ext)
+ 
+for(i in (n - nCV:1) ){
+  
+  print(i)
+  
+  # Increasing subsets of y,x
+  yt = QScale$Q[1:i]; xt = X[1:i,c("t","M1","M2","importM2","raw_matM1")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M1","M2","importM2","raw_matM1")] )$pred
+  
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = as.matrix( X[1:i,c("M1","M2","importM2","raw_matM1")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = as.matrix( X[i+1, c("M1","M2","importM2","raw_matM1")], 1 )  )
+  
+}
+
+summary(fit)
+plot(fit)
+# Cross-Validated Performance 
+(MSPE = mean( (month012_ext$Q - y_fe)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(month012_ext$Q - y_fe)/abs(month012_ext$Q), na.rm = TRUE ))
+```
+
+#Functions for each Arima Models
+```{r}
+Arima0 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+Arima01 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+Arima012 <- function(df,p,d,q, regs) {
+  
+  model <- Arima( y = df, order=c(p,d,q), xreg = regs, include.drift = TRUE)
+  return(model)
+}
+```
 
 
