@@ -828,3 +828,45 @@ Arima012 <- function(df,p,d,q, regs) {
 ```
 
 
+```{r}
+training0 = diff(month0_ext[1:64])
+testing0 = diff(month0_ext[64:90])
+month0arima <- arima_analysis(training0$Q,1,1,1,training01[,c("M0","importM0","cpiM0","raw_matM0")])
+summary(month0arima)
+
+cast0 = forecast::forecast(month0arima, xreg = testing0[,c("M0","importM0","cpiM0","raw_matM0")])
+plot(cast0)
+
+n = nrow(month0_ext); 
+nCV = 20 # number of corss validation errors
+y_fe = y_fe. = rep(NA,n) # Y forecast error 
+
+
+
+#WENT OVER THIS WITH SOTIRIOS 
+X = cbind( t=1:nrow(month0_ext) , month0_ext)
+
+for(i in (n - nCV:1) ){
+  
+  print(i)
+  
+  # Increasing subsets of y,x
+  yt = month0_ext$Q[1:i]; xt = X[1:i,c("t","M0","importM0","cpiM0","raw_matM0")]
+  out = arima( yt , order=c(1,1,1),  xreg = xt)
+  
+  
+  # 1-step-ahead forecast erros using predict() function
+  y_fe[i+1] = predict( out, newxreg = X[i+1, c("t","M0","importM0","cpiM0","raw_matM0")] )$pred
+  
+  out2 = forecast::Arima( yt , order=c(1,1,1),  xreg = as.matrix( X[1:i,c("M0","importM0","cpiM0","raw_matM0")] ), include.drift = T)
+  fit = forecast::forecast(out2, xreg = as.matrix( X[i+1, c("M0","importM0","cpiM0","raw_matM0")], 1 )  )
+  
+}
+
+summary(fit)
+plot(fit)
+# Cross-Validated Performance 
+(MSPE = mean( (month0_ext$Q - y_fe)^2, na.rm = TRUE ))
+
+(MAPE = mean( abs(month0_ext$Q - y_fe)/abs(month0_ext$Q), na.rm = TRUE ))
+```
