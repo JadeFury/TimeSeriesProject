@@ -707,7 +707,9 @@ month01_ext <- Qscale_cpi[,c("Q","M0","M1","importM0","importM1",
                              "exportM0","exportM1","ratesM0","ratesM1",
                              "ippiM0","ippiM1","raw_matM0","raw_matM1","cpiM0","cpiM1")]
 
-#month01_ext <- na.fill(month01_ext, 0)
+
+mean_M0 <- mean(month01_ext[,"M0"], na.rm = T)
+month01_ext[,"M0"] <- na.fill(month01_ext[,"M0"], mean_M0)
 
 month01_ext
 ```
