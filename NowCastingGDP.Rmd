@@ -668,13 +668,31 @@ Qscale_cpi = merge(Qscale_raw_mat, cpi_xts, join = "inner" )
 Qscale_cpi
 ```
 
+```{r}
+# First to fill the NAs with the means of the exchange rates
+
+mean_ratesM0 <- mean(Qscale_cpi[,"ratesM0"], na.rm = T)
+
+mean_ratesM1 <- mean(Qscale_cpi[,"ratesM1"], na.rm = T)
+
+mean_ratesM2 <- mean(Qscale_cpi[,"ratesM2"], na.rm = T)
+
+# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM0"], mean_ratesM0)
+# 
+# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM1"], mean_ratesM1)
+# 
+# Qscale_cpi <- na.fill(Qscale_cpi[,"ratesM2"], mean_ratesM2)
+```
+
+
+
 Now to subset the data
 ```{r}
 # First we want all the month0 variables
 
 month0_ext <- Qscale_cpi[,c("Q","M0","importM0","exportM0","ratesM0","ippiM0","raw_matM0","cpiM0")]
 
-month0_ext <- na.fill(month0_ext, 0)
+#month0_ext <- na.fill(month0_ext, 0)
 
 month0_ext
 ```
@@ -687,7 +705,7 @@ month01_ext <- Qscale_cpi[,c("Q","M0","M1","importM0","importM1",
                              "exportM0","exportM1","ratesM0","ratesM1",
                              "ippiM0","ippiM1","raw_matM0","raw_matM1","cpiM0","cpiM1")]
 
-month01_ext <- na.fill(month01_ext, 0)
+#month01_ext <- na.fill(month01_ext, 0)
 
 month01_ext
 ```
@@ -698,7 +716,7 @@ month01_ext
 
 month012_ext <- Qscale_cpi
 
-month01_ext <- na.fill(month01_ext, 0)
+#month01_ext <- na.fill(month01_ext, 0)
 
 month012_ext <- na.fill(month012_ext,0)
 ```
